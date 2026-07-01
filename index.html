@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorer de Genes IEI (IUIS)</title>
+    <meta name="description" content="Una aplicación web moderna e interactiva para explorar, filtrar y descargar la base de datos de Errores Innatos de la Inmunidad (IUIS).">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- PapaParse for custom CSV uploads -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="dark-theme">
+    <div class="app-container">
+        
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-logo-section">
+                <div class="logo-icon">
+                    <i class="h-8 w-8" data-lucide="dna"></i>
+                </div>
+                <div class="header-text">
+                    <h1>IEI Gene Explorer</h1>
+                    <p class="subtitle">Base de Datos de Inmunodeficiencias y Errores Innatos de la Inmunidad (IUIS)</p>
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <button id="theme-toggle" class="icon-btn" title="Cambiar Tema (Claro/Oscuro)">
+                    <i data-lucide="sun" class="sun-icon"></i>
+                    <i data-lucide="moon" class="moon-icon"></i>
+                </button>
+                <div class="file-upload-wrapper">
+                    <button class="btn btn-outline" id="upload-trigger-btn">
+                        <i data-lucide="upload"></i>
+                        <span>Cargar CSV Personalizado</span>
+                    </button>
+                    <input type="file" id="csv-file-input" accept=".csv" style="display: none;">
+                </div>
+            </div>
+        </header>
+        
+        <!-- Stat Cards Section -->
+        <section class="stats-dashboard">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper blue">
+                    <i data-lucide="database"></i>
+                </div>
+                <div class="stat-data">
+                    <h3 id="stat-genes-count">0 / 0</h3>
+                    <p>Genes Filtrados / Total</p>
+                </div>
+                <div class="stat-progress-bar">
+                    <div class="stat-progress" id="stat-genes-progress" style="width: 100%"></div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon-wrapper purple">
+                    <i data-lucide="shield-alert"></i>
+                </div>
+                <div class="stat-data">
+                    <h3 id="stat-active-filters">0</h3>
+                    <p>Filtros Activos</p>
+                </div>
+            </div>
+            
+            <div class="stat-card hidden-mobile">
+                <div class="stat-icon-wrapper green">
+                    <i data-lucide="stethoscope"></i>
+                </div>
+                <div class="stat-data">
+                    <h3 id="stat-diseases-count">0</h3>
+                    <p>Enfermedades</p>
+                </div>
+            </div>
+            
+            <div class="stat-card hidden-mobile">
+                <div class="stat-icon-wrapper orange">
+                    <i data-lucide="fingerprint"></i>
+                </div>
+                <div class="stat-data">
+                    <h3 id="stat-hpos-count">0</h3>
+                    <p>Fenotipos HPO únicos</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Main Layout Grid -->
+        <main class="main-layout full-width">
+            
+            <!-- Collapsible Clinical / Advanced Filters Panel -->
+            <div class="advanced-filters-panel" id="advanced-filters-panel">
+                <button class="advanced-filters-trigger" id="advanced-filters-trigger" type="button">
+                    <span class="trigger-label">
+                        <i data-lucide="sliders-horizontal"></i>
+                        <span>Filtros Clínicos y Avanzados</span>
+                    </span>
+                    <i data-lucide="chevron-down" class="arrow-icon"></i>
+                </button>
+                <div class="advanced-filters-content" id="advanced-filters-content">
+                    <div class="advanced-filters-grid">
+                        <div class="filter-group">
+                            <label>Categoría Mayor</label>
+                            <div class="custom-select-wrapper" id="select-major-category-wrapper"></div>
+                        </div>
+                        <div class="filter-group">
+                            <label>Herencia (Inheritance)</label>
+                            <div class="custom-select-wrapper" id="select-inheritance-wrapper"></div>
+                        </div>
+                        <div class="filter-group">
+                            <label>Subcategoría (Subcategory)</label>
+                            <div class="custom-select-wrapper" id="select-subcategory-wrapper"></div>
+                        </div>
+                        <div class="filter-group">
+                            <label>Manifestaciones Clínicas / Asociadas</label>
+                            <div class="search-input-wrapper">
+                                <i data-lucide="search" class="search-icon"></i>
+                                <input type="text" id="filter-features" placeholder="Ej. microcephaly, deafness, albinism...">
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label>Recuento Células T</label>
+                            <div class="custom-select-wrapper" id="select-tcell-wrapper"></div>
+                        </div>
+                        <div class="filter-group">
+                            <label>Recuento Células B</label>
+                            <div class="custom-select-wrapper" id="select-bcell-wrapper"></div>
+                        </div>
+                        <div class="filter-group">
+                            <label>Inmunoglobulinas</label>
+                            <div class="custom-select-wrapper" id="select-igs-wrapper"></div>
+                        </div>
+                        <div class="filter-group">
+                            <label>Neutrófilos</label>
+                            <div class="custom-select-wrapper" id="select-neutrophils-wrapper"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Content Area: Active Chips, Table, Downloads -->
+            <section class="content-results">
+                
+                <!-- Search and Actions Bar -->
+                <div class="results-actions-bar">
+                    <div class="global-search-container">
+                        <i data-lucide="search" class="global-search-icon"></i>
+                        <input type="text" id="global-search-input" placeholder="Búsqueda rápida en todas las columnas...">
+                    </div>
+                    
+                    <div class="actions-group-right">
+                        <button class="btn btn-outline text-danger" id="clear-all-filters-btn" title="Limpiar todos los filtros" style="display: none;">
+                            <i data-lucide="filter-x"></i>
+                            <span>Limpiar Filtros</span>
+                        </button>
+                        
+                        <div class="download-dropdown-wrapper">
+                            <button class="btn btn-primary" id="download-btn-trigger">
+                                <i data-lucide="download"></i>
+                                <span>Descargar</span>
+                                <i data-lucide="chevron-down"></i>
+                            </button>
+                            <div class="download-dropdown" id="download-dropdown-menu">
+                                <button id="copy-genes-clipboard">
+                                    <span class="icon-wrapper"><i data-lucide="copy"></i></span>
+                                    <span class="btn-text">Copiar Genes Filtrados</span>
+                                </button>
+                                <button id="download-genes-txt">
+                                    <i data-lucide="file-text"></i>
+                                    <span>Lista de Genes (.txt)</span>
+                                </button>
+                                <button id="download-table-csv">
+                                    <i data-lucide="table"></i>
+                                    <span>Tabla Filtrada (.csv)</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Active Chips Area -->
+                <div class="active-chips-container" id="active-chips-container" style="display: none;">
+                    <span class="chips-label">Filtros activos:</span>
+                    <div class="chips-list" id="chips-list"></div>
+                    <button class="btn-text btn-small text-danger" id="chips-clear-btn">Limpiar</button>
+                </div>
+                
+                <!-- Table Card Container -->
+                <div class="table-card">
+                    <div class="table-scroll-container">
+                        <table class="data-table" id="genes-table">
+                            <thead>
+                                <tr class="table-header-row">
+                                    <th class="sortable" data-column="gene" style="width: 12%;">Gen <span class="sort-icon-wrapper"><i data-lucide="chevrons-up-down"></i></span></th>
+                                    <th class="sortable" data-column="disease" style="width: 32%;">Enfermedad <span class="sort-icon-wrapper"><i data-lucide="chevrons-up-down"></i></span></th>
+                                    <th class="sortable" data-column="inheritance" style="width: 12%;">Herencia <span class="sort-icon-wrapper"><i data-lucide="chevrons-up-down"></i></span></th>
+                                    <th class="sortable" data-column="omim" style="width: 10%;">OMIM <span class="sort-icon-wrapper"><i data-lucide="chevrons-up-down"></i></span></th>
+                                    <th class="sortable hidden-tablet" data-column="major_category" style="width: 20%;">Categoría Mayor <span class="sort-icon-wrapper"><i data-lucide="chevrons-up-down"></i></span></th>
+                                    <th class="text-center" style="width: 14%;">Recursos</th>
+                                </tr>
+                                <tr class="table-filter-row">
+                                    <th>
+                                        <div class="header-filter-wrapper">
+                                            <input type="text" id="filter-gene" placeholder="Buscar gen...">
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="header-filter-wrapper">
+                                            <input type="text" id="filter-disease" placeholder="Buscar enfermedad o subcategoría...">
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="header-filter-wrapper">
+                                            <input type="text" id="filter-inheritance-text" placeholder="Ej. AR, AD, XL...">
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="header-filter-wrapper">
+                                            <input type="text" id="filter-omim" placeholder="Buscar OMIM...">
+                                        </div>
+                                    </th>
+                                    <th class="hidden-tablet">
+                                        <div class="header-filter-wrapper">
+                                            <input type="text" id="filter-major-category-text" placeholder="Buscar categoría...">
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <!-- Actions placeholder -->
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body">
+                                <!-- Dynamic rows go here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Table Loading State -->
+                    <div class="table-loading" id="table-loading-overlay" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Filtrando registros...</p>
+                    </div>
+
+                    <!-- No Results State -->
+                    <div class="no-results" id="no-results-state" style="display: none;">
+                        <i data-lucide="search-code"></i>
+                        <h3>No se encontraron resultados</h3>
+                        <p>Intenta ajustar tus criterios de búsqueda o limpia los filtros activos.</p>
+                        <button class="btn btn-outline" id="no-results-clear-btn">Restaurar Filtros</button>
+                    </div>
+                    
+                    <!-- Table Footer: Pagination & Info -->
+                    <footer class="table-footer">
+                        <div class="footer-info-wrapper">
+                            <div class="footer-info" id="footer-info-text">
+                                Mostrando 0 a 0 de 0 registros
+                            </div>
+                            <div class="page-size-selector">
+                                <label for="page-size-select">Filas por página:</label>
+                                <select id="page-size-select">
+                                    <option value="10">10</option>
+                                    <option value="20" selected>20</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                    <option value="all">Todas</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="pagination-controls" id="pagination-controls">
+                            <!-- Pagination buttons rendered here -->
+                        </div>
+                    </footer>
+                </div>
+            </section>
+        </main>
+        
+        <!-- Drag and drop landing layer -->
+        <div id="drag-drop-overlay" class="drag-drop-overlay">
+            <div class="drag-drop-box">
+                <i data-lucide="file-spreadsheet"></i>
+                <h2>Suelta el archivo CSV aquí</h2>
+                <p>Cargará la base de datos de genes dinámicamente</p>
+            </div>
+        </div>
+        
+        <!-- Detail Drawer / Slide out panel -->
+        <div class="detail-drawer-overlay" id="detail-drawer-overlay"></div>
+        <aside class="detail-drawer" id="detail-drawer">
+            <div class="drawer-header">
+                <div class="drawer-header-title">
+                    <span class="category-badge" id="drawer-category-badge">Categoría</span>
+                    <h2 id="drawer-gene-title">Gen</h2>
+                    <p id="drawer-disease-subtitle">Nombre de la Enfermedad</p>
+                </div>
+                <button class="close-btn" id="detail-drawer-close" title="Cerrar detalles">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            
+            <div class="drawer-body" id="detail-drawer-body">
+                <!-- Content generated dynamically -->
+            </div>
+        </aside>
+        
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>&copy; 2026 IEI Gene Explorer. Diseñado para cursos de Inmunología Clínica.</p>
+        </footer>
+    </div>
+    
+    <!-- Loaded compiled static data -->
+    <script src="data.js"></script>
+    
+    <!-- App script -->
+    <script src="app.js"></script>
+</body>
+</html>
