@@ -1,60 +1,70 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explorer de Genes IEI (IUIS)</title>
-    <meta name="description" content="Una aplicación web moderna e interactiva para explorar, filtrar y descargar la base de datos de Errores Innatos de la Inmunidad (IUIS).">
-    
+    <title>Interactive IEI</title>
+    <meta name="description"
+        content="Una aplicación web moderna e interactiva para explorar, filtrar y descargar la base de datos de Errores Innatos de la Inmunidad (IUIS).">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
-    
-    <!-- PapaParse for custom CSV uploads -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="Logo.png">
+    <link rel="shortcut icon" href="Logo.png">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body class="dark-theme">
     <div class="app-container">
-        
+
         <!-- Header -->
         <header class="app-header">
             <div class="header-logo-section">
-                <div class="logo-icon">
-                    <i class="h-8 w-8" data-lucide="dna"></i>
-                </div>
+                <img src="Logo.png" alt="IEI Logo" class="app-logo-img">
                 <div class="header-text">
                     <h1>IEI Gene Explorer</h1>
-                    <p class="subtitle">Base de Datos de Inmunodeficiencias y Errores Innatos de la Inmunidad (IUIS)</p>
+                    <p class="subtitle" id="hdr-subtitle">Base de Datos de Inmunodeficiencias y Errores Innatos de la
+                        Inmunidad (IUIS)</p>
                 </div>
             </div>
-            
+
             <div class="header-actions">
                 <button id="theme-toggle" class="icon-btn" title="Cambiar Tema (Claro/Oscuro)">
                     <i data-lucide="sun" class="sun-icon"></i>
                     <i data-lucide="moon" class="moon-icon"></i>
                 </button>
-                <div class="file-upload-wrapper">
-                    <button class="btn btn-outline" id="upload-trigger-btn">
-                        <i data-lucide="upload"></i>
-                        <span>Cargar CSV Personalizado</span>
-                    </button>
-                    <input type="file" id="csv-file-input" accept=".csv" style="display: none;">
-                </div>
+                <button id="about-toggle" class="icon-btn" title="Acerca de / About">
+                    <i data-lucide="info"></i>
+                </button>
+                <button id="lang-toggle" class="btn btn-outline btn-compact lang-toggle-btn" title="Cambiar Idioma">
+                    <span id="lang-toggle-text">EN</span>
+                </button>
             </div>
         </header>
-        
+
         <!-- Stat Cards Section -->
         <section class="stats-dashboard">
-            <div class="stat-card">
-                <div class="stat-icon-wrapper blue">
-                    <i data-lucide="database"></i>
+            <div class="stat-card" id="stat-card-genes">
+                <div class="stat-card-top">
+                    <div class="stat-icon-wrapper blue">
+                        <i data-lucide="database"></i>
+                    </div>
+                    <span class="stat-impact-badge" id="stat-impact-badge" style="display: none;">100%</span>
                 </div>
                 <div class="stat-data">
                     <h3 id="stat-genes-count">0 / 0</h3>
@@ -64,8 +74,8 @@
                     <div class="stat-progress" id="stat-genes-progress" style="width: 100%"></div>
                 </div>
             </div>
-            
-            <div class="stat-card">
+
+            <div class="stat-card" id="stat-card-filters">
                 <div class="stat-icon-wrapper purple">
                     <i data-lucide="shield-alert"></i>
                 </div>
@@ -74,31 +84,37 @@
                     <p>Filtros Activos</p>
                 </div>
             </div>
-            
-            <div class="stat-card hidden-mobile">
-                <div class="stat-icon-wrapper green">
-                    <i data-lucide="stethoscope"></i>
+
+            <div class="stat-card action-stat-card" id="ig-calc-toggle-btn" title="Ingresar valores de laboratorio por edad">
+                <div class="stat-icon-wrapper amber">
+                    <i data-lucide="calculator"></i>
                 </div>
                 <div class="stat-data">
-                    <h3 id="stat-diseases-count">0</h3>
-                    <p>Enfermedades</p>
+                    <h3 id="btn-ig-calc-text">Ingresar valores</h3>
+                    <p>Perfil Lab por Edad</p>
+                </div>
+                <div class="action-stat-arrow">
+                    <i data-lucide="chevron-right"></i>
                 </div>
             </div>
-            
-            <div class="stat-card hidden-mobile">
-                <div class="stat-icon-wrapper orange">
-                    <i data-lucide="fingerprint"></i>
+
+            <div class="stat-card action-stat-card" id="load-default-btn" title="Abrir comparador de categorías desglosadas">
+                <div class="stat-icon-wrapper indigo">
+                    <i data-lucide="layers"></i>
                 </div>
                 <div class="stat-data">
-                    <h3 id="stat-hpos-count">0</h3>
-                    <p>Fenotipos HPO únicos</p>
+                    <h3 id="btn-compare-text">Comparar categorías</h3>
+                    <p>Matriz Desglosada IUIS</p>
+                </div>
+                <div class="action-stat-arrow">
+                    <i data-lucide="chevron-right"></i>
                 </div>
             </div>
         </section>
-        
+
         <!-- Main Layout Grid -->
         <main class="main-layout full-width">
-            
+
             <!-- Collapsible Clinical / Advanced Filters Panel -->
             <div class="advanced-filters-panel" id="advanced-filters-panel">
                 <button class="advanced-filters-trigger" id="advanced-filters-trigger" type="button">
@@ -126,7 +142,8 @@
                             <label>Manifestaciones Clínicas / Asociadas</label>
                             <div class="search-input-wrapper">
                                 <i data-lucide="search" class="search-icon"></i>
-                                <input type="text" id="filter-features" placeholder="Ej. microcephaly, deafness, albinism...">
+                                <input type="text" id="filter-features"
+                                    placeholder="Ej. microcephaly, deafness, albinism...">
                             </div>
                         </div>
                         <div class="filter-group">
@@ -148,23 +165,25 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Content Area: Active Chips, Table, Downloads -->
             <section class="content-results">
-                
+
                 <!-- Search and Actions Bar -->
                 <div class="results-actions-bar">
                     <div class="global-search-container">
                         <i data-lucide="search" class="global-search-icon"></i>
-                        <input type="text" id="global-search-input" placeholder="Búsqueda rápida en todas las columnas...">
+                        <input type="text" id="global-search-input"
+                            placeholder="Búsqueda rápida en todas las columnas...">
                     </div>
-                    
+
                     <div class="actions-group-right">
-                        <button class="btn btn-outline text-danger" id="clear-all-filters-btn" title="Limpiar todos los filtros" style="display: none;">
+                        <button class="btn btn-outline text-danger" id="clear-all-filters-btn"
+                            title="Limpiar todos los filtros" style="display: none;">
                             <i data-lucide="filter-x"></i>
                             <span>Limpiar Filtros</span>
                         </button>
-                        
+
                         <div class="download-dropdown-wrapper">
                             <button class="btn btn-primary" id="download-btn-trigger">
                                 <i data-lucide="download"></i>
@@ -188,26 +207,55 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Active Chips Area -->
                 <div class="active-chips-container" id="active-chips-container" style="display: none;">
-                    <span class="chips-label">Filtros activos:</span>
+                    <div class="chips-header">
+                        <div class="chips-header-left">
+                            <i data-lucide="filter" style="width: 16px; height: 16px; color: var(--primary);"></i>
+                            <span class="chips-label">Filtros activos:</span>
+                            <span class="chips-count-badge" id="chips-count-badge">0</span>
+                        </div>
+                        <div class="chips-header-right">
+                            <button class="btn-text btn-small text-danger" id="chips-clear-btn"
+                                type="button">Limpiar</button>
+                            <button class="icon-btn-small" id="chips-toggle-collapse-btn" type="button"
+                                title="Minimizar / Expandir filtros">
+                                <i data-lucide="chevron-up" id="chips-collapse-icon"></i>
+                            </button>
+                        </div>
+                    </div>
                     <div class="chips-list" id="chips-list"></div>
-                    <button class="btn-text btn-small text-danger" id="chips-clear-btn">Limpiar</button>
                 </div>
-                
+
                 <!-- Table Card Container -->
                 <div class="table-card">
                     <div class="table-scroll-container">
                         <table class="data-table" id="genes-table">
                             <thead>
                                 <tr class="table-header-row">
-                                    <th class="sortable" data-column="gene" style="width: 12%;">Gen <span class="sort-icon-wrapper"><i data-lucide="chevrons-up-down"></i></span></th>
-                                    <th class="sortable" data-column="disease" style="width: 32%;">Enfermedad <span class="sort-icon-wrapper"><i data-lucide="chevrons-up-down"></i></span></th>
-                                    <th class="sortable" data-column="inheritance" style="width: 12%;">Herencia <span class="sort-icon-wrapper"><i data-lucide="chevrons-up-down"></i></span></th>
-                                    <th class="sortable" data-column="omim" style="width: 10%;">OMIM <span class="sort-icon-wrapper"><i data-lucide="chevrons-up-down"></i></span></th>
-                                    <th class="sortable hidden-tablet" data-column="major_category" style="width: 20%;">Categoría Mayor <span class="sort-icon-wrapper"><i data-lucide="chevrons-up-down"></i></span></th>
-                                    <th class="text-center" style="width: 14%;">Recursos</th>
+                                    <th class="sortable" data-column="gene" style="width: 10%;"><span
+                                            id="th-gene">Gen</span> <span class="sort-icon-wrapper"><i
+                                                data-lucide="chevrons-up-down"></i></span></th>
+                                    <th class="sortable" data-column="disease" style="width: 24%;"><span
+                                            id="th-disease">Enfermedad</span> <span class="sort-icon-wrapper"><i
+                                                data-lucide="chevrons-up-down"></i></span></th>
+                                    <th class="sortable" data-column="inheritance" style="width: 10%;"><span
+                                            id="th-inheritance">Herencia</span> <span class="sort-icon-wrapper"><i
+                                                data-lucide="chevrons-up-down"></i></span></th>
+                                    <th class="sortable" data-column="omim" style="width: 9%;"><span
+                                            id="th-omim">OMIM</span> <span class="sort-icon-wrapper"><i
+                                                data-lucide="chevrons-up-down"></i></span></th>
+                                    <th class="sortable hidden-tablet" data-column="major_category" style="width: 18%;">
+                                        <span id="th-major-category">Categoría Mayor</span> <span
+                                            class="sort-icon-wrapper"><i data-lucide="chevrons-up-down"></i></span>
+                                    </th>
+                                    <th class="sortable hidden-tablet" data-column="subcategory" style="width: 17%;">
+                                        <span id="th-subcategory">Subtabla</span> <span class="sort-icon-wrapper"><i
+                                                data-lucide="chevrons-up-down"></i></span>
+                                    </th>
+                                    <th class="text-center" style="width: 12%;"><span id="th-resources">Recursos</span>
+                                    </th>
                                 </tr>
                                 <tr class="table-filter-row">
                                     <th>
@@ -217,12 +265,13 @@
                                     </th>
                                     <th>
                                         <div class="header-filter-wrapper">
-                                            <input type="text" id="filter-disease" placeholder="Buscar enfermedad o subcategoría...">
+                                            <input type="text" id="filter-disease" placeholder="Buscar enfermedad...">
                                         </div>
                                     </th>
                                     <th>
                                         <div class="header-filter-wrapper">
-                                            <input type="text" id="filter-inheritance-text" placeholder="Ej. AR, AD, XL...">
+                                            <input type="text" id="filter-inheritance-text"
+                                                placeholder="Ej. AR, AD, XL...">
                                         </div>
                                     </th>
                                     <th>
@@ -232,7 +281,14 @@
                                     </th>
                                     <th class="hidden-tablet">
                                         <div class="header-filter-wrapper">
-                                            <input type="text" id="filter-major-category-text" placeholder="Buscar categoría...">
+                                            <input type="text" id="filter-major-category-text"
+                                                placeholder="Buscar categoría...">
+                                        </div>
+                                    </th>
+                                    <th class="hidden-tablet">
+                                        <div class="header-filter-wrapper">
+                                            <input type="text" id="filter-subcategory-text"
+                                                placeholder="Buscar subtabla...">
                                         </div>
                                     </th>
                                     <th>
@@ -245,7 +301,7 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <!-- Table Loading State -->
                     <div class="table-loading" id="table-loading-overlay" style="display: none;">
                         <div class="spinner"></div>
@@ -259,7 +315,7 @@
                         <p>Intenta ajustar tus criterios de búsqueda o limpia los filtros activos.</p>
                         <button class="btn btn-outline" id="no-results-clear-btn">Restaurar Filtros</button>
                     </div>
-                    
+
                     <!-- Table Footer: Pagination & Info -->
                     <footer class="table-footer">
                         <div class="footer-info-wrapper">
@@ -284,16 +340,132 @@
                 </div>
             </section>
         </main>
-        
-        <!-- Drag and drop landing layer -->
-        <div id="drag-drop-overlay" class="drag-drop-overlay">
-            <div class="drag-drop-box">
-                <i data-lucide="file-spreadsheet"></i>
-                <h2>Suelta el archivo CSV aquí</h2>
-                <p>Cargará la base de datos de genes dinámicamente</p>
+
+        <!-- About Modal -->
+        <div class="modal-overlay" id="about-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-circle-info"></i> <span id="about-modal-title">Acerca de la
+                            herramienta</span></h3>
+                    <button class="close-btn" id="about-modal-close" title="Cerrar">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Quiénes somos -->
+                    <div class="tech-item about-section">
+                        <h4><i class="fa-solid fa-users"></i> <span id="about-who-title">Quiénes somos</span></h4>
+                        <p id="about-who-desc">Desarrollado por <strong>Lorenzo Erra</strong> — Bioinformático /
+                            Genómico Clínico, como recurso educativo de genómica y medicina de precisión. Basado en el
+                            <strong>reporte de la IUIS</strong>
+                        </p>
+                    </div>
+
+                    <!-- Cafecito / Feedback -->
+                    <div class="tech-item about-contact">
+                        <h4><i class="fa-solid fa-mug-hot"></i> <span id="about-contact-title">Feedback &
+                                Contacto</span></h4>
+                        <p id="about-contact-desc">¿Encontraste un error, tenés una sugerencia o querés colaborar con el
+                            proyecto? Tu feedback ayuda a mejorar la herramienta para toda la comunidad.</p>
+                        <div class="about-actions">
+                            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfqkkfVOFaeELg_SQlnvYCNEEtaznLh4n85iVtqSdnQD7DdSw/viewform?usp=preview"
+                                target="_blank" class="about-btn about-btn--primary">
+                                <i class="fa-solid fa-envelope"></i> <span id="about-feedback-btn">Enviar
+                                    Feedback</span>
+                            </a>
+                            <a href="https://cafecito.app/lorerra" target="_blank" rel="noopener"
+                                id="cafecitoBtnPlaceholder" class="about-btn about-btn--coffee">
+                                <i class="fa-solid fa-mug-hot"></i> <span id="about-coffee-btn">Invitarme un cafecito
+                                    ☕</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        
+
+        <!-- Ig & Lab Reference Calculator Modal -->
+        <div class="modal-overlay" id="ig-calc-modal">
+            <div class="modal-content" style="max-width: 780px;">
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-calculator"></i> <span id="ig-modal-title">Valores de Referencia de
+                            Laboratorio Inmunológico por Edad</span></h3>
+                    <button class="close-btn" id="ig-calc-modal-close" title="Cerrar">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body" style="padding: 20px;">
+                    <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 16px;"
+                        id="ig-modal-desc">
+                        Selecciona la edad del paciente e ingresa los valores de su laboratorio para evaluar
+                        Inmunoglobulinas, Células T, Células B y Neutrófilos.
+                    </p>
+
+                    <div class="ig-calc-grid">
+                        <div class="ig-calc-box">
+                            <label for="ig-calc-age" id="lbl-ig-age">Edad del Paciente:</label>
+                            <select id="ig-calc-age">
+                                <option value="0-3m">0 – 3 meses</option>
+                                <option value="4-6m">4 – 6 meses</option>
+                                <option value="7-12m">7 – 12 meses</option>
+                                <option value="1-3y">1 – 3 años</option>
+                                <option value="4-6y">4 – 6 años</option>
+                                <option value="7-11y">7 – 11 años</option>
+                                <option value="12-16y">12 – 16 años</option>
+                                <option value="adult" selected>Adulto (> 16 años)</option>
+                            </select>
+                        </div>
+                        <div class="ig-calc-box">
+                            <label for="ig-calc-igg">IgG Paciente (mg/dL):</label>
+                            <input type="number" id="ig-calc-igg" placeholder="Ej. 450">
+                        </div>
+                        <div class="ig-calc-box">
+                            <label for="ig-calc-iga">IgA Paciente (mg/dL):</label>
+                            <input type="number" id="ig-calc-iga" placeholder="Ej. 30">
+                        </div>
+                        <div class="ig-calc-box">
+                            <label for="ig-calc-igm">IgM Paciente (mg/dL):</label>
+                            <input type="number" id="ig-calc-igm" placeholder="Ej. 80">
+                        </div>
+                        <div class="ig-calc-box">
+                            <label for="ig-calc-tcell">Células T CD3+ (/mm³):</label>
+                            <input type="number" id="ig-calc-tcell" placeholder="Ej. 1200">
+                        </div>
+                        <div class="ig-calc-box">
+                            <label for="ig-calc-bcell">Células B CD19+ (/mm³):</label>
+                            <input type="number" id="ig-calc-bcell" placeholder="Ej. 150">
+                        </div>
+                        <div class="ig-calc-box">
+                            <label for="ig-calc-neutrophils">Neutrófilos (/mm³):</label>
+                            <input type="number" id="ig-calc-neutrophils" placeholder="Ej. 1800">
+                        </div>
+                    </div>
+
+                    <table class="ig-calc-results-table">
+                        <thead>
+                            <tr>
+                                <th>Parámetro</th>
+                                <th>Rango Normal por Edad</th>
+                                <th>Valor Ingresado</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ig-calc-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 12px;">
+                        <button class="btn btn-outline" id="ig-calc-reset-btn" type="button">Limpiar</button>
+                        <button class="btn btn-primary" id="ig-calc-apply-btn" type="button">
+                            <i data-lucide="filter"></i>
+                            <span id="ig-calc-apply-text">Filtrar por Diagnóstico en el Explorador</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Detail Drawer / Slide out panel -->
         <div class="detail-drawer-overlay" id="detail-drawer-overlay"></div>
         <aside class="detail-drawer" id="detail-drawer">
@@ -307,22 +479,23 @@
                     <i data-lucide="x"></i>
                 </button>
             </div>
-            
+
             <div class="drawer-body" id="detail-drawer-body">
                 <!-- Content generated dynamically -->
             </div>
         </aside>
-        
+
         <!-- Footer -->
         <footer class="app-footer">
             <p>&copy; 2026 IEI Gene Explorer. Diseñado para cursos de Inmunología Clínica.</p>
         </footer>
     </div>
-    
+
     <!-- Loaded compiled static data -->
     <script src="data.js"></script>
-    
+
     <!-- App script -->
     <script src="app.js"></script>
 </body>
+
 </html>

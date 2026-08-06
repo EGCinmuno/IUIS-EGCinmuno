@@ -27,6 +27,13 @@ def convert():
         except StopIteration:
             print("Error: CSV is empty")
             return
+
+        headers_lower = [header.strip().lower() for header in headers]
+        categorias_idx = -1
+        for idx, header in enumerate(headers_lower):
+            if 'categorias_desglosed' in header or 'categorias desglosed' in header or 'desglosed' in header:
+                categorias_idx = idx
+                break
             
         # Standardize headers to lower_snake_case for key mappings
         # Columns in our CSV:
@@ -69,6 +76,7 @@ def convert():
             item['associated_features'] = row[10].strip() if len(row) > 10 else ''
             item['major_category'] = row[11].strip() if len(row) > 11 else ''
             item['subcategory'] = row[12].strip() if len(row) > 12 else ''
+            item['categorias_desglosed'] = row[categorias_idx].strip() if categorias_idx >= 0 and len(row) > categorias_idx else ''
             item['icd9'] = row[13].strip() if len(row) > 13 else ''
             item['icd10'] = row[14].strip() if len(row) > 14 else ''
             

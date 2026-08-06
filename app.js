@@ -32,10 +32,124 @@ const selectWrappers = {};
 // Default Fallback Database in case data.js is not loaded
 const DEFAULT_DATABASE = typeof IUIS_DATA !== 'undefined' ? IUIS_DATA : [];
 
+// Internationalization Dictionary (ES / EN)
+const I18N_APP = {
+    es: {
+        langToggle: 'EN',
+        subtitle: 'Base de Datos de Inmunodeficiencias y Errores Innatos de la Inmunidad (IUIS)',
+        compareBtn: 'Comparar categorías',
+        btnIgCalc: 'Ingresar valores',
+        statGenesLabel: 'Genes Filtrados / Total',
+        statActiveFiltersLabel: 'Filtros Activos',
+        statDiseasesLabel: 'Enfermedades',
+        advTriggerText: 'Filtros Clínicos y Avanzados',
+        lblMajorCat: 'Categoría Mayor',
+        lblInheritance: 'Herencia (Inheritance)',
+        lblSubcat: 'Subcategoría (Subcategory)',
+        lblFeatures: 'Manifestaciones Clínicas / Asociadas',
+        phFeatures: 'Ej. microcephaly, deafness, albinism...',
+        lblTCell: 'Recuento Células T',
+        lblBCell: 'Recuento Células B',
+        lblIgs: 'Inmunoglobulinas',
+        lblNeutrophils: 'Neutrófilos',
+        phGlobal: 'Búsqueda rápida en todas las columnas...',
+        btnClearFilters: 'Limpiar Filtros',
+        btnDownload: 'Descargar',
+        btnCopyList: 'Copiar Genes Filtrados',
+        btnDownloadTxt: 'Lista de Genes (.txt)',
+        btnDownloadCsv: 'Tabla Filtrada (.csv)',
+        chipsLabel: 'Filtros activos:',
+        chipsClear: 'Limpiar',
+        thGene: 'Gen',
+        thDisease: 'Enfermedad',
+        thInheritance: 'Herencia',
+        thOmim: 'OMIM',
+        thMajorCategory: 'Categoría Mayor',
+        thSubcategory: 'Subtabla',
+        thResources: 'Recursos',
+        phFilterGene: 'Buscar gen...',
+        phFilterDisease: 'Buscar enfermedad...',
+        phFilterInheritance: 'Ej. AR, AD, XL...',
+        phFilterOmim: 'Buscar OMIM...',
+        phFilterCategory: 'Buscar categoría...',
+        phFilterSubcategory: 'Buscar subtabla...',
+        noResultsTitle: 'No se encontraron resultados',
+        noResultsDesc: 'Intenta ajustar tus criterios de búsqueda o limpia los filtros activos.',
+        noResultsResetBtn: 'Restaurar Filtros',
+        rowsPerPage: 'Filas por página:',
+        allRows: 'Todas',
+        showingInfo: (start, end, total) => `Mostrando ${start} a ${end} de ${total} registros`,
+        aboutTitle: 'Acerca de la herramienta',
+        aboutWhoTitle: 'Quiénes somos',
+        aboutWhoDesc: 'Desarrollado por <strong>Lorenzo Erra</strong> — Bioinformático / Genómico Clínico, como recurso educativo de genómica y medicina de precisión. Basado en el <strong>reporte de la IUIS</strong>.',
+        aboutContactTitle: 'Feedback & Contacto',
+        aboutContactDesc: '¿Encontraste un error, tenés una sugerencia o querés colaborar con el proyecto? Tu feedback ayuda a mejorar la herramienta para toda la comunidad.',
+        aboutFeedbackBtn: 'Enviar Feedback',
+        aboutCoffeeBtn: 'Invitarme un cafecito ☕'
+    },
+    en: {
+        langToggle: 'ES',
+        subtitle: 'Inborn Errors of Immunity & Immunodeficiencies Database (IUIS)',
+        compareBtn: 'Compare categories',
+        btnIgCalc: 'Enter values',
+        statGenesLabel: 'Filtered Genes / Total',
+        statActiveFiltersLabel: 'Active Filters',
+        statDiseasesLabel: 'Diseases',
+        advTriggerText: 'Clinical & Advanced Filters',
+        lblMajorCat: 'Major Category',
+        lblInheritance: 'Inheritance Mode',
+        lblSubcat: 'Subcategory',
+        lblFeatures: 'Clinical Manifestations / Associated',
+        phFeatures: 'E.g., microcephaly, deafness, albinism...',
+        lblTCell: 'T Cell Count',
+        lblBCell: 'B Cell Count',
+        lblIgs: 'Immunoglobulins',
+        lblNeutrophils: 'Neutrophils',
+        phGlobal: 'Quick search in all columns...',
+        btnClearFilters: 'Clear Filters',
+        btnDownload: 'Download',
+        btnCopyList: 'Copy Filtered Genes',
+        btnDownloadTxt: 'Gene List (.txt)',
+        btnDownloadCsv: 'Filtered Table (.csv)',
+        chipsLabel: 'Active filters:',
+        chipsClear: 'Clear',
+        thGene: 'Gene',
+        thDisease: 'Disease',
+        thInheritance: 'Inheritance',
+        thOmim: 'OMIM',
+        thMajorCategory: 'Major Category',
+        thSubcategory: 'Subtable',
+        thResources: 'Resources',
+        phFilterGene: 'Search gene...',
+        phFilterDisease: 'Search disease...',
+        phFilterInheritance: 'E.g., AR, AD, XL...',
+        phFilterOmim: 'Search OMIM...',
+        phFilterCategory: 'Search category...',
+        phFilterSubcategory: 'Search subtable...',
+        noResultsTitle: 'No results found',
+        noResultsDesc: 'Try adjusting your search criteria or clearing active filters.',
+        noResultsResetBtn: 'Reset Filters',
+        rowsPerPage: 'Rows per page:',
+        allRows: 'All',
+        showingInfo: (start, end, total) => `Showing ${start} to ${end} of ${total} records`,
+        aboutTitle: 'About this tool',
+        aboutWhoTitle: 'About Us',
+        aboutWhoDesc: 'Developed by <strong>Lorenzo Erra</strong> — Clinical Genomicist / Bioinformatician, as an educational resource for precision medicine. Based on the <strong>IUIS report</strong>.',
+        aboutContactTitle: 'Feedback & Contact',
+        aboutContactDesc: 'Found a bug, have a suggestion, or want to collaborate? Your feedback helps improve this tool for the entire community.',
+        aboutFeedbackBtn: 'Send Feedback',
+        aboutCoffeeBtn: 'Buy me a coffee ☕'
+    }
+};
+
+// Current Language State ('es' or 'en')
+let currentLang = localStorage.getItem('iei.lang') || 'es';
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Setup Theme
+    // 1. Setup Theme & Language
     initTheme();
+    initLanguage();
     
     // 2. Setup Data
     if (DEFAULT_DATABASE.length > 0) {
@@ -44,14 +158,13 @@ document.addEventListener('DOMContentLoaded', () => {
         showNoDataState();
     }
     
-    // 3. Setup UI Events
+    // 3. Setup UI Events & About Modal
     initUiEvents();
-    
-    // 4. Setup File upload / Drag & Drop
-    initFileUpload();
+    initAboutModal();
+    initIgCalcModal();
 });
 
-/* --- Core Theme Functions --- */
+/* --- Core Theme & Language Functions --- */
 function initTheme() {
     const savedTheme = localStorage.getItem('theme') || 'dark';
     document.body.className = `${savedTheme}-theme`;
@@ -63,6 +176,206 @@ function initTheme() {
         document.body.className = `${newTheme}-theme`;
         localStorage.setItem('theme', newTheme);
     });
+}
+
+function initLanguage() {
+    const langBtn = document.getElementById('lang-toggle');
+    if (langBtn) {
+        langBtn.addEventListener('click', () => {
+            currentLang = currentLang === 'es' ? 'en' : 'es';
+            localStorage.setItem('iei.lang', currentLang);
+            applyLanguage();
+            buildFilterSelects();
+            applyFiltersAndRender();
+        });
+    }
+    applyLanguage();
+}
+
+function applyLanguage() {
+    const t = I18N_APP[currentLang] || I18N_APP.es;
+    
+    // Header
+    const langText = document.getElementById('lang-toggle-text');
+    if (langText) langText.textContent = t.langToggle;
+    
+    const subtitle = document.getElementById('hdr-subtitle');
+    if (subtitle) subtitle.textContent = t.subtitle;
+    
+    const compareBtnText = document.getElementById('btn-compare-text');
+    if (compareBtnText) compareBtnText.textContent = t.compareBtn;
+
+    const igCalcBtnText = document.getElementById('btn-ig-calc-text');
+    if (igCalcBtnText) igCalcBtnText.textContent = t.btnIgCalc;
+    
+    // Stats labels
+    const statGenesLabel = document.querySelector('#stat-genes-count + p');
+    if (statGenesLabel) statGenesLabel.textContent = t.statGenesLabel;
+    
+    const statActiveLabel = document.querySelector('#stat-active-filters + p');
+    if (statActiveLabel) statActiveLabel.textContent = t.statActiveFiltersLabel;
+    
+    const lblStatDiseases = document.getElementById('lbl-stat-diseases');
+    if (lblStatDiseases) lblStatDiseases.textContent = t.statDiseasesLabel;
+    
+    // Advanced filters panel
+    const advTriggerSpan = document.querySelector('#advanced-filters-trigger .trigger-label span');
+    if (advTriggerSpan) advTriggerSpan.textContent = t.advTriggerText;
+    
+    const labels = document.querySelectorAll('.advanced-filters-grid .filter-group label');
+    if (labels.length >= 8) {
+        labels[0].textContent = t.lblMajorCat;
+        labels[1].textContent = t.lblInheritance;
+        labels[2].textContent = t.lblSubcat;
+        labels[3].textContent = t.lblFeatures;
+        labels[4].textContent = t.lblTCell;
+        labels[5].textContent = t.lblBCell;
+        labels[6].textContent = t.lblIgs;
+        labels[7].textContent = t.lblNeutrophils;
+    }
+    
+    const filterFeatures = document.getElementById('filter-features');
+    if (filterFeatures) filterFeatures.placeholder = t.phFeatures;
+    
+    // Global search and buttons
+    const globalSearch = document.getElementById('global-search-input');
+    if (globalSearch) globalSearch.placeholder = t.phGlobal;
+    
+    const clearFiltersBtnSpan = document.querySelector('#clear-all-filters-btn span');
+    if (clearFiltersBtnSpan) clearFiltersBtnSpan.textContent = t.btnClearFilters;
+    
+    const downloadTriggerSpan = document.querySelector('#download-btn-trigger > span');
+    if (downloadTriggerSpan) downloadTriggerSpan.textContent = t.btnDownload;
+    
+    const copyGenesSpan = document.querySelector('#copy-genes-clipboard .btn-text');
+    if (copyGenesSpan) copyGenesSpan.textContent = t.btnCopyList;
+    
+    const downloadTxtSpan = document.querySelector('#download-genes-txt span');
+    if (downloadTxtSpan) downloadTxtSpan.textContent = t.btnDownloadTxt;
+    
+    const downloadCsvSpan = document.querySelector('#download-table-csv span');
+    if (downloadCsvSpan) downloadCsvSpan.textContent = t.btnDownloadCsv;
+    
+    const chipsLabel = document.querySelector('.chips-label');
+    if (chipsLabel) chipsLabel.textContent = t.chipsLabel;
+    
+    const chipsClearBtn = document.getElementById('chips-clear-btn');
+    if (chipsClearBtn) chipsClearBtn.textContent = t.chipsClear;
+
+    // Table Headers Translation
+    const thGene = document.getElementById('th-gene');
+    if (thGene) thGene.textContent = t.thGene;
+
+    const thDisease = document.getElementById('th-disease');
+    if (thDisease) thDisease.textContent = t.thDisease;
+
+    const thInheritance = document.getElementById('th-inheritance');
+    if (thInheritance) thInheritance.textContent = t.thInheritance;
+
+    const thOmim = document.getElementById('th-omim');
+    if (thOmim) thOmim.textContent = t.thOmim;
+
+    const thMajorCat = document.getElementById('th-major-category');
+    if (thMajorCat) thMajorCat.textContent = t.thMajorCategory;
+
+    const thSubcat = document.getElementById('th-subcategory');
+    if (thSubcat) thSubcat.textContent = t.thSubcategory;
+
+    const thResources = document.getElementById('th-resources');
+    if (thResources) thResources.textContent = t.thResources;
+    
+    // Table filter placeholders
+    const fGene = document.getElementById('filter-gene');
+    if (fGene) fGene.placeholder = t.phFilterGene;
+    
+    const fDisease = document.getElementById('filter-disease');
+    if (fDisease) fDisease.placeholder = t.phFilterDisease;
+    
+    const fInheritance = document.getElementById('filter-inheritance-text');
+    if (fInheritance) fInheritance.placeholder = t.phFilterInheritance;
+    
+    const fOmim = document.getElementById('filter-omim');
+    if (fOmim) fOmim.placeholder = t.phFilterOmim;
+    
+    const fMajor = document.getElementById('filter-major-category-text');
+    if (fMajor) fMajor.placeholder = t.phFilterCategory;
+
+    const fSubcat = document.getElementById('filter-subcategory-text');
+    if (fSubcat) fSubcat.placeholder = t.phFilterSubcategory;
+    
+    // No results state
+    const noResultsH3 = document.querySelector('#no-results-state h3');
+    if (noResultsH3) noResultsH3.textContent = t.noResultsTitle;
+    
+    const noResultsP = document.querySelector('#no-results-state p');
+    if (noResultsP) noResultsP.textContent = t.noResultsDesc;
+    
+    const noResultsBtn = document.getElementById('no-results-clear-btn');
+    if (noResultsBtn) noResultsBtn.textContent = t.noResultsResetBtn;
+    
+    // Page size label
+    const pageSizeLabel = document.querySelector('.page-size-selector label');
+    if (pageSizeLabel) pageSizeLabel.textContent = t.rowsPerPage;
+    
+    const pageSizeSelectAll = document.querySelector('#page-size-select option[value="all"]');
+    if (pageSizeSelectAll) pageSizeSelectAll.textContent = t.allRows;
+    
+    // About modal
+    const aboutTitle = document.getElementById('about-modal-title');
+    if (aboutTitle) aboutTitle.textContent = t.aboutTitle;
+    
+    const aboutWhoTitle = document.getElementById('about-who-title');
+    if (aboutWhoTitle) aboutWhoTitle.textContent = t.aboutWhoTitle;
+    
+    const aboutWhoDesc = document.getElementById('about-who-desc');
+    if (aboutWhoDesc) aboutWhoDesc.innerHTML = t.aboutWhoDesc;
+    
+    const aboutContactTitle = document.getElementById('about-contact-title');
+    if (aboutContactTitle) aboutContactTitle.textContent = t.aboutContactTitle;
+    
+    const aboutContactDesc = document.getElementById('about-contact-desc');
+    if (aboutContactDesc) aboutContactDesc.textContent = t.aboutContactDesc;
+    
+    const aboutFeedbackBtn = document.getElementById('about-feedback-btn');
+    if (aboutFeedbackBtn) aboutFeedbackBtn.textContent = t.aboutFeedbackBtn;
+    
+    const aboutCoffeeBtn = document.getElementById('about-coffee-btn');
+    if (aboutCoffeeBtn) aboutCoffeeBtn.textContent = t.aboutCoffeeBtn;
+}
+
+function initAboutModal() {
+    const aboutBtn = document.getElementById('about-toggle');
+    const aboutModal = document.getElementById('about-modal');
+    const closeBtn = document.getElementById('about-modal-close');
+    
+    if (!aboutModal) return;
+    
+    const openModal = () => {
+        aboutModal.classList.add('open');
+    };
+    
+    const closeModal = () => {
+        aboutModal.classList.remove('open');
+    };
+    
+    if (aboutBtn) aboutBtn.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    
+    aboutModal.addEventListener('click', (e) => {
+        if (e.target === aboutModal) closeModal();
+    });
+    
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && aboutModal.classList.contains('open')) {
+            closeModal();
+        }
+    });
+
+    // Auto-open on startup after brief delay
+    setTimeout(openModal, 600);
+
+    // Auto-open every 5 minutes (300,000 ms)
+    setInterval(openModal, 5 * 60 * 1000);
 }
 
 function showNoDataState() {
@@ -88,11 +401,65 @@ function loadDataset(data) {
     filteredData = [...database];
     currentPage = 1;
     
+    // Check if redirected from categorias.html with active category selection
+    checkStoredCategoryFilter();
+    
     // Auto-discover distinct categories and build filters
     buildFilterSelects();
     
     // Run initial filter + stats + render
     applyFiltersAndRender();
+}
+
+function checkStoredCategoryFilter() {
+    const isFilterActive = localStorage.getItem('iei.explorerFilterActive');
+    const rawCategories = localStorage.getItem('iei.selectedCategories');
+    const directFilterRaw = localStorage.getItem('iei.explorerDirectFilter');
+
+    if (directFilterRaw) {
+        localStorage.removeItem('iei.explorerDirectFilter');
+        try {
+            const parsed = JSON.parse(directFilterRaw);
+            if (parsed.subcategory) {
+                activeFilters.subcategory = [parsed.subcategory];
+                activeFilters.subcategoryText = parsed.subcategory;
+                const subInput = document.getElementById('filter-subcategory-text');
+                if (subInput) subInput.value = parsed.subcategory;
+            }
+        } catch (e) {
+            console.error("Error reading direct filter", e);
+        }
+    } else if (isFilterActive === 'true' && rawCategories) {
+        localStorage.removeItem('iei.explorerFilterActive');
+        try {
+            const selectedList = JSON.parse(rawCategories);
+            if (Array.isArray(selectedList) && selectedList.length > 0) {
+                const matchingMajorCats = new Set();
+                const matchingSubcats = new Set();
+                database.forEach(row => {
+                    const major = (row.major_category || '').trim();
+                    const sub = (row.subcategory || '').trim();
+                    selectedList.forEach(sel => {
+                        const selLower = sel.toLowerCase();
+                        if (major.toLowerCase().includes(selLower) || selLower.includes(major.toLowerCase())) {
+                            matchingMajorCats.add(major);
+                        }
+                        if (sub.toLowerCase().includes(selLower) || selLower.includes(sub.toLowerCase())) {
+                            matchingSubcats.add(sub);
+                        }
+                    });
+                });
+                if (matchingMajorCats.size > 0) {
+                    activeFilters.majorCategory = Array.from(matchingMajorCats);
+                }
+                if (matchingSubcats.size > 0) {
+                    activeFilters.subcategory = Array.from(matchingSubcats);
+                }
+            }
+        } catch (e) {
+            console.error("Error reading stored category filter", e);
+        }
+    }
 }
 
 function buildFilterSelects() {
@@ -295,6 +662,14 @@ document.addEventListener('click', () => {
 
 /* --- UI Controls & Event Listeners --- */
 function initUiEvents() {
+    // 0. Compare Categories Button
+    const defaultBtn = document.getElementById('load-default-btn');
+    if (defaultBtn) {
+        defaultBtn.addEventListener('click', () => {
+            window.location.href = 'categorias.html';
+        });
+    }
+
     // 1. Text Filters Search
     const searchInputs = [
         { id: 'filter-gene', key: 'gene' },
@@ -303,6 +678,7 @@ function initUiEvents() {
         { id: 'filter-omim', key: 'omim' },
         { id: 'filter-inheritance-text', key: 'inheritanceText' },
         { id: 'filter-major-category-text', key: 'majorCategoryText' },
+        { id: 'filter-subcategory-text', key: 'subcategoryText' },
         { id: 'global-search-input', key: 'global' }
     ];
     
@@ -507,14 +883,76 @@ function showLoading(show) {
 }
 
 /* --- Dashboard Statistics --- */
+function animateGeneCount(targetCount) {
+    const countElem = document.getElementById('stat-genes-count');
+    const progressElem = document.getElementById('stat-genes-progress');
+    const impactBadge = document.getElementById('stat-impact-badge');
+    const statCard = document.getElementById('stat-card-genes');
+    if (!countElem) return;
+
+    const total = database.length;
+    let startVal = parseInt(countElem.dataset.currentVal, 10);
+    if (isNaN(startVal)) {
+        const textParts = countElem.textContent.split('/');
+        startVal = parseInt(textParts[0].trim(), 10);
+        if (isNaN(startVal)) startVal = total;
+    }
+    countElem.dataset.currentVal = targetCount;
+
+    // Trigger stat card pulse animation
+    if (statCard) {
+        statCard.classList.remove('updated');
+        void statCard.offsetWidth; // trigger reflow
+        statCard.classList.add('updated');
+    }
+
+    // Progress bar width
+    const percentage = total > 0 ? (targetCount / total) * 100 : 0;
+    if (progressElem) {
+        progressElem.style.width = `${percentage}%`;
+    }
+
+    // Impact Badge calculation (Reduction %)
+    if (impactBadge) {
+        if (targetCount < total && targetCount > 0) {
+            const reductionPct = Math.round((1 - targetCount / total) * 100);
+            impactBadge.innerHTML = `<i data-lucide="sparkles" style="width:12px;height:12px;"></i> -${reductionPct}% (${targetCount} genes)`;
+            impactBadge.style.display = 'inline-flex';
+            lucide.createIcons();
+        } else if (targetCount === 0) {
+            impactBadge.innerHTML = `<i data-lucide="alert-triangle" style="width:12px;height:12px;"></i> 0 genes`;
+            impactBadge.style.display = 'inline-flex';
+            lucide.createIcons();
+        } else {
+            impactBadge.style.display = 'none';
+        }
+    }
+
+    // Smooth counter animation
+    const duration = 350;
+    const startTime = performance.now();
+
+    function step(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progressRatio = Math.min(elapsed / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progressRatio, 3);
+        const currentVal = Math.round(startVal + (targetCount - startVal) * easeOut);
+
+        countElem.textContent = `${currentVal} / ${total}`;
+
+        if (progressRatio < 1) {
+            requestAnimationFrame(step);
+        } else {
+            countElem.textContent = `${targetCount} / ${total}`;
+        }
+    }
+
+    requestAnimationFrame(step);
+}
+
 function updateStats() {
-    // 1. Count statistic
-    const countText = document.getElementById('stat-genes-count');
-    countText.textContent = `${filteredData.length} / ${database.length}`;
-    
-    const progress = document.getElementById('stat-genes-progress');
-    const percentage = database.length > 0 ? (filteredData.length / database.length) * 100 : 0;
-    progress.style.width = `${percentage}%`;
+    // 1. Animated Count & Impact Badge
+    animateGeneCount(filteredData.length);
     
     // 2. Active filters count
     let activeFiltersCount = 0;
@@ -522,12 +960,13 @@ function updateStats() {
         if (activeFilters[key]) {
             if (Array.isArray(activeFilters[key])) {
                 activeFiltersCount += activeFilters[key].length;
-            } else {
+            } else if (activeFilters[key].trim() !== '') {
                 activeFiltersCount += 1;
             }
         }
     }
-    document.getElementById('stat-active-filters').textContent = activeFiltersCount;
+    const statActiveElem = document.getElementById('stat-active-filters');
+    if (statActiveElem) statActiveElem.textContent = activeFiltersCount;
     
     // Toggle visibility of clear filters button in actions bar
     const clearBtn = document.getElementById('clear-all-filters-btn');
@@ -541,26 +980,22 @@ function updateStats() {
             .map(row => row.disease ? row.disease.trim() : '')
             .filter(Boolean)
     ).size;
-    document.getElementById('stat-diseases-count').textContent = uniqueDiseases;
-    
-    // 4. Unique HPO Terms
-    const uniqueHpos = new Set(
-        filteredData.flatMap(row => row.hpo_ids || [])
-    ).size;
-    document.getElementById('stat-hpos-count').textContent = uniqueHpos;
+    const statDiseasesElem = document.getElementById('stat-diseases-count');
+    if (statDiseasesElem) statDiseasesElem.textContent = uniqueDiseases;
 }
 
 /* --- Active Filters Chips Render --- */
 function renderActiveChips() {
     const chipContainer = document.getElementById('active-chips-container');
     const chipList = document.getElementById('chips-list');
+    const countBadge = document.getElementById('chips-count-badge');
     
     chipList.innerHTML = '';
-    let hasChips = false;
+    let totalChips = 0;
     
     // Helper to add a chip
     const addChip = (label, filterKey, value, isArray = false) => {
-        hasChips = true;
+        totalChips++;
         const chip = document.createElement('div');
         chip.className = 'chip';
         chip.innerHTML = `
@@ -604,8 +1039,25 @@ function renderActiveChips() {
             });
         }
     }
-    
-    chipContainer.style.display = hasChips ? 'flex' : 'none';
+
+    if (countBadge) countBadge.textContent = totalChips;
+    chipContainer.style.display = totalChips > 0 ? 'block' : 'none';
+
+    // Setup collapse button listener once
+    const collapseBtn = document.getElementById('chips-toggle-collapse-btn');
+    if (collapseBtn && !collapseBtn.dataset.bound) {
+        collapseBtn.dataset.bound = "true";
+        collapseBtn.addEventListener('click', () => {
+            chipContainer.classList.toggle('collapsed');
+            const icon = document.getElementById('chips-collapse-icon');
+            const isCollapsed = chipContainer.classList.contains('collapsed');
+            if (icon) {
+                icon.setAttribute('data-lucide', isCollapsed ? 'chevron-down' : 'chevron-up');
+                lucide.createIcons();
+            }
+        });
+    }
+
     lucide.createIcons();
 }
  
@@ -711,7 +1163,6 @@ function renderTableRows() {
             </td>
             <td>
                 <div style="font-weight: 500;">${row.disease}</div>
-                <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px;">${row.subcategory}</div>
             </td>
             <td>
                 <span class="badge-inheritance ${inheritanceClass}">${row.inheritance || 'N/A'}</span>
@@ -719,6 +1170,9 @@ function renderTableRows() {
             <td>${omimHtml}</td>
             <td class="hidden-tablet cat-cell-clickable" onclick="event.stopPropagation(); filterByMajorCategory('${row.major_category.replace(/'/g, "\\'")}');">
                 <span class="badge-category-click">${catText}</span>
+            </td>
+            <td class="hidden-tablet subcat-cell-clickable" onclick="event.stopPropagation(); filterBySubcategory('${(row.subcategory || '').replace(/'/g, "\\'")}');">
+                <span class="badge-subcategory-click">${row.subcategory || '-'}</span>
             </td>
             <td class="text-center">
                 <div class="links-cell">
@@ -774,6 +1228,190 @@ function filterByMajorCategory(category) {
     buildFilterSelects();
     // Run filters and render
     applyFiltersAndRender();
+}
+
+function filterBySubcategory(subcategory) {
+    if (!subcategory) return;
+    activeFilters.subcategory = [subcategory];
+    
+    activeFilters.subcategoryText = '';
+    const subInput = document.getElementById('filter-subcategory-text');
+    if (subInput) subInput.value = '';
+    
+    buildFilterSelects();
+    applyFiltersAndRender();
+}
+
+/* --- Ig Reference Calculator Modal --- */
+/* --- Ig & Immunological Reference Calculator Modal --- */
+const IG_REFERENCE_RANGES = {
+    '0-3m':  { igg: [300, 1000], iga: [5, 50],   igm: [15, 100],  tcell: [2500, 5500], bcell: [600, 3000], neutrophils: [1000, 6000] },
+    '4-6m':  { igg: [200, 600],  iga: [10, 70],  igm: [20, 100],  tcell: [2200, 4800], bcell: [700, 2500], neutrophils: [1000, 6000] },
+    '7-12m': { igg: [300, 900],  iga: [15, 100], igm: [30, 120],  tcell: [1900, 4500], bcell: [600, 2000], neutrophils: [1500, 8000] },
+    '1-3y':  { igg: [400, 1000], iga: [20, 150], igm: [40, 150],  tcell: [1400, 3700], bcell: [500, 1500], neutrophils: [1500, 8000] },
+    '4-6y':  { igg: [500, 1200], iga: [30, 200], igm: [45, 180],  tcell: [1200, 3000], bcell: [300, 1000], neutrophils: [1500, 8000] },
+    '7-11y': { igg: [600, 1400], iga: [50, 250], igm: [50, 200],  tcell: [900, 2600],  bcell: [200, 600],  neutrophils: [1500, 8000] },
+    '12-16y':{ igg: [600, 1500], iga: [60, 300], igm: [50, 220],  tcell: [800, 2300],  bcell: [200, 500],  neutrophils: [1500, 8000] },
+    'adult': { igg: [700, 1600], iga: [70, 400], igm: [40, 230],  tcell: [700, 2100],  bcell: [100, 500],  neutrophils: [1500, 8000] }
+};
+
+function initIgCalcModal() {
+    const calcBtn = document.getElementById('ig-calc-toggle-btn');
+    const modal = document.getElementById('ig-calc-modal');
+    const closeBtn = document.getElementById('ig-calc-modal-close');
+    const ageSelect = document.getElementById('ig-calc-age');
+    const iggInput = document.getElementById('ig-calc-igg');
+    const igaInput = document.getElementById('ig-calc-iga');
+    const igmInput = document.getElementById('ig-calc-igm');
+    const tcellInput = document.getElementById('ig-calc-tcell');
+    const bcellInput = document.getElementById('ig-calc-bcell');
+    const neutInput = document.getElementById('ig-calc-neutrophils');
+    const resetBtn = document.getElementById('ig-calc-reset-btn');
+    const applyBtn = document.getElementById('ig-calc-apply-btn');
+
+    if (!calcBtn || !modal) return;
+
+    const openModal = () => {
+        modal.classList.add('open');
+        updateIgCalcTable();
+    };
+
+    const closeModal = () => {
+        modal.classList.remove('open');
+    };
+
+    calcBtn.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+
+    [ageSelect, iggInput, igaInput, igmInput, tcellInput, bcellInput, neutInput].forEach(elem => {
+        if (elem) elem.addEventListener('input', updateIgCalcTable);
+    });
+
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            [iggInput, igaInput, igmInput, tcellInput, bcellInput, neutInput].forEach(i => {
+                if (i) i.value = '';
+            });
+            updateIgCalcTable();
+        });
+    }
+
+    if (applyBtn) {
+        applyBtn.addEventListener('click', () => {
+            const ageKey = ageSelect ? ageSelect.value : 'adult';
+            const ref = IG_REFERENCE_RANGES[ageKey] || IG_REFERENCE_RANGES.adult;
+            const iggVal = parseFloat(iggInput ? iggInput.value : '');
+            const igaVal = parseFloat(igaInput ? igaInput.value : '');
+            const igmVal = parseFloat(igmInput ? igmInput.value : '');
+            const tcellVal = parseFloat(tcellInput ? tcellInput.value : '');
+            const bcellVal = parseFloat(bcellInput ? bcellInput.value : '');
+            const neutVal = parseFloat(neutInput ? neutInput.value : '');
+
+            // Helper to get unique options from current dataset
+            const getUniqueOptions = (key) => {
+                const set = new Set();
+                database.forEach(r => { if (r[key]) set.add(r[key].trim()); });
+                return Array.from(set);
+            };
+
+            const allIgs = getUniqueOptions('immunoglobulins');
+            const allTCells = getUniqueOptions('t_cell');
+            const allBCells = getUniqueOptions('b_cell');
+            const allNeutrophils = getUniqueOptions('neutrophils');
+
+            // 1. Immunoglobulins (Low / Decreased)
+            const isIgLow = (!isNaN(iggVal) && iggVal < ref.igg[0]) ||
+                            (!isNaN(igaVal) && igaVal < ref.iga[0]) ||
+                            (!isNaN(igmVal) && igmVal < ref.igm[0]);
+            if (isIgLow) {
+                const lowIgs = allIgs.filter(v => {
+                    const l = v.toLowerCase();
+                    return l.includes('low') || l.includes('disminuid') || l.includes('ausenc') || l.includes('agammaglobulin') || l.includes('hypo') || l.includes('reduced') || l.includes('decrease');
+                });
+                activeFilters.immunoglobulins = lowIgs.length > 0 ? lowIgs : allIgs;
+            }
+
+            // 2. T-Cells (Low / Decreased)
+            if (!isNaN(tcellVal) && tcellVal < ref.tcell[0]) {
+                const lowT = allTCells.filter(v => {
+                    const l = v.toLowerCase();
+                    return l.includes('low') || l.includes('disminuid') || l.includes('ausenc') || l.includes('profound') || l.includes('decrease') || l.includes('lack');
+                });
+                activeFilters.tCell = lowT.length > 0 ? lowT : allTCells;
+            }
+
+            // 3. B-Cells (Low / Decreased)
+            if (!isNaN(bcellVal) && bcellVal < ref.bcell[0]) {
+                const lowB = allBCells.filter(v => {
+                    const l = v.toLowerCase();
+                    return l.includes('low') || l.includes('disminuid') || l.includes('ausenc') || l.includes('decrease') || l.includes('absent') || l.includes('rare');
+                });
+                activeFilters.bCell = lowB.length > 0 ? lowB : allBCells;
+            }
+
+            // 4. Neutrophils (Low / Decreased)
+            if (!isNaN(neutVal) && neutVal < ref.neutrophils[0]) {
+                const lowNeut = allNeutrophils.filter(v => {
+                    const l = v.toLowerCase();
+                    return l.includes('low') || l.includes('neutropenia') || l.includes('disminuid') || l.includes('ausenc') || l.includes('decrease');
+                });
+                activeFilters.neutrophils = lowNeut.length > 0 ? lowNeut : allNeutrophils;
+            }
+
+            closeModal();
+            buildFilterSelects();
+            applyFiltersAndRender();
+        });
+    }
+}
+
+function updateIgCalcTable() {
+    const ageSelect = document.getElementById('ig-calc-age');
+    const iggInput = document.getElementById('ig-calc-igg');
+    const igaInput = document.getElementById('ig-calc-iga');
+    const igmInput = document.getElementById('ig-calc-igm');
+    const tcellInput = document.getElementById('ig-calc-tcell');
+    const bcellInput = document.getElementById('ig-calc-bcell');
+    const neutInput = document.getElementById('ig-calc-neutrophils');
+    const tbody = document.getElementById('ig-calc-table-body');
+    if (!tbody || !ageSelect) return;
+
+    const ageKey = ageSelect.value;
+    const ref = IG_REFERENCE_RANGES[ageKey] || IG_REFERENCE_RANGES.adult;
+
+    const params = [
+        { name: 'IgG', range: ref.igg, val: parseFloat(iggInput ? iggInput.value : ''), unit: 'mg/dL' },
+        { name: 'IgA', range: ref.iga, val: parseFloat(igaInput ? igaInput.value : ''), unit: 'mg/dL' },
+        { name: 'IgM', range: ref.igm, val: parseFloat(igmInput ? igmInput.value : ''), unit: 'mg/dL' },
+        { name: 'Células T CD3+', range: ref.tcell, val: parseFloat(tcellInput ? tcellInput.value : ''), unit: '/mm³' },
+        { name: 'Células B CD19+', range: ref.bcell, val: parseFloat(bcellInput ? bcellInput.value : ''), unit: '/mm³' },
+        { name: 'Neutrófilos', range: ref.neutrophils, val: parseFloat(neutInput ? neutInput.value : ''), unit: '/mm³' }
+    ];
+
+    tbody.innerHTML = params.map(p => {
+        let statusBadge = '<span class="ig-badge-status neutral">Sin ingresar</span>';
+        if (!isNaN(p.val)) {
+            if (p.val < p.range[0]) {
+                statusBadge = '<span class="ig-badge-status low">📉 Disminuido (Hipo)</span>';
+            } else if (p.val > p.range[1]) {
+                statusBadge = '<span class="ig-badge-status high">📈 Elevado (Hiper)</span>';
+            } else {
+                statusBadge = '<span class="ig-badge-status normal">✅ Normal</span>';
+            }
+        }
+        return `
+            <tr>
+                <td><strong>${p.name}</strong></td>
+                <td>${p.range[0]} – ${p.range[1]} ${p.unit}</td>
+                <td>${!isNaN(p.val) ? p.val + ' ' + p.unit : '<span style="color:var(--text-muted);">-</span>'}</td>
+                <td>${statusBadge}</td>
+            </tr>
+        `;
+    }).join('');
 }
 
 function getInheritanceClass(pattern) {
@@ -1223,10 +1861,17 @@ function initFileUpload() {
     const dropOverlay = document.getElementById('drag-drop-overlay');
     const fileInput = document.getElementById('csv-file-input');
     const uploadBtn = document.getElementById('upload-trigger-btn');
+    const defaultBtn = document.getElementById('load-default-btn');
     
     uploadBtn.addEventListener('click', () => {
         fileInput.click();
     });
+
+    if (defaultBtn) {
+        defaultBtn.addEventListener('click', () => {
+            window.location.href = 'categorias.html';
+        });
+    }
     
     fileInput.addEventListener('change', (e) => {
         if (e.target.files.length > 0) {
@@ -1308,6 +1953,7 @@ function handleUploadedFile(file) {
                     associated_features: getMappedValue(row, mapping.associated_features),
                     major_category: getMappedValue(row, mapping.major_category),
                     subcategory: getMappedValue(row, mapping.subcategory),
+                    categorias_desglosed: getMappedValue(row, mapping.categorias_desglosed),
                     icd9: getMappedValue(row, mapping.icd9),
                     icd10: getMappedValue(row, mapping.icd10),
                     hpo_ids: []
@@ -1355,6 +2001,7 @@ function getHeaderMapping(headers) {
         associated_features: -1,
         major_category: -1,
         subcategory: -1,
+        categorias_desglosed: -1,
         icd9: -1,
         icd10: -1,
         hpoCols: [] // Multiple columns can hold HPO codes
@@ -1375,6 +2022,7 @@ function getHeaderMapping(headers) {
         else if (h.includes('feature') || h.includes('asociado') || h.includes('associated') || h.includes('clinica') || h.includes('clínica') || h.includes('manifestacion')) map.associated_features = idx;
         else if (h.includes('major') || h.includes('categoria mayor') || h.includes('categoría mayor') || h.includes('table') || h.includes('tabla')) map.major_category = idx;
         else if (h.includes('subcat') || h.includes('sub-table') || h.includes('subtabla')) map.subcategory = idx;
+        else if (h.includes('categorias_desglosed') || h.includes('categorias desglosed') || h.includes('category breakdown') || h.includes('desglosed')) map.categorias_desglosed = idx;
         else if (h.includes('icd9') || h.includes('icd-9') || h.includes('cie9')) map.icd9 = idx;
         else if (h.includes('icd10') || h.includes('icd-10') || h.includes('cie10')) map.icd10 = idx;
         
@@ -1398,6 +2046,7 @@ function getHeaderMapping(headers) {
     if (map.associated_features === -1) map.associated_features = 10;
     if (map.major_category === -1) map.major_category = 11;
     if (map.subcategory === -1) map.subcategory = 12;
+    if (map.categorias_desglosed === -1) map.categorias_desglosed = -1;
     if (map.icd9 === -1) map.icd9 = 13;
     if (map.icd10 === -1) map.icd10 = 14;
     

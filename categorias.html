@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selector de Categorías IEI</title>
+    <meta name="description" content="Selecciona categorías y compáralas contra la matriz de Categorias_desglosed.csv.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="Logo.png">
+    <link rel="shortcut icon" href="Logo.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="categorias_desglosed_data.js"></script>
+</head>
+<body class="dark-theme comparison-page">
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-logo-section">
+                <img src="Logo.png" alt="IEI Logo" class="app-logo-img">
+                <div class="header-text">
+                    <h1 id="cat-hdr-title">Selector de Categorías</h1>
+                    <p class="subtitle" id="cat-hdr-subtitle">Haz clic en las categorías desglosadas para preparar una comparación</p>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button id="theme-toggle" class="icon-btn" title="Cambiar Tema (Claro/Oscuro)">
+                    <i data-lucide="sun" class="sun-icon"></i>
+                    <i data-lucide="moon" class="moon-icon"></i>
+                </button>
+                <button id="about-toggle" class="icon-btn" title="Acerca de / About">
+                    <i data-lucide="info"></i>
+                </button>
+                <button id="lang-toggle" class="btn btn-outline btn-compact lang-toggle-btn" title="Cambiar Idioma">
+                    <span id="lang-toggle-text">EN</span>
+                </button>
+                <button class="btn btn-outline btn-compact header-action-btn" id="back-to-explorer-btn" type="button">
+                    <i data-lucide="arrow-left"></i>
+                    <span id="cat-back-btn-text">Volver al explorador</span>
+                </button>
+            </div>
+        </header>
+
+        <section class="comparison-hero">
+            <div>
+                <p class="comparison-kicker" id="cat-hero-kicker">Base predefinida</p>
+                <h2 id="cat-hero-title">Categorías del comparador</h2>
+                <p class="comparison-copy" id="cat-hero-copy">Selecciona una o varias categorías y pulsa comparar para ver el versus contra la matriz de <strong>Categorias_desglosed.csv</strong>.</p>
+            </div>
+            <div class="comparison-hero-meta">
+                <div class="meta-card">
+                    <span id="category-total">0</span>
+                    <small id="cat-meta-categories">Categorías</small>
+                </div>
+                <div class="meta-card">
+                    <span id="selected-total">0</span>
+                    <small id="cat-meta-selected">Seleccionadas</small>
+                </div>
+            </div>
+        </section>
+
+        <section class="comparison-toolbar">
+            <label class="category-search-box" for="category-search">
+                <i data-lucide="search"></i>
+                <input id="category-search" type="search" placeholder="Buscar categoría o subtipo">
+            </label>
+        </section>
+
+        <!-- Presets Section -->
+        <section class="presets-section">
+            <span class="presets-label"><i data-lucide="sparkles"></i> <span id="preset-label-text">Presets rápidos:</span></span>
+            <div class="presets-chips">
+                <button type="button" class="preset-btn" data-preset="lymphopenia">🧬 Linfopenias</button>
+                <button type="button" class="preset-btn" data-preset="infections">🦠 Infecciones / Resp.</button>
+                <button type="button" class="preset-btn" data-preset="autoimmune">💥 Autoinmune / HLH</button>
+                <button type="button" class="preset-btn" data-preset="systemic">🫀 Sistémico / Sindrómico</button>
+            </div>
+        </section>
+
+        <main class="comparison-layout">
+            <section class="category-browser">
+                <div id="categories-grid" class="category-grid"></div>
+                <div id="categories-empty" class="empty-category-state" style="display:none;">
+                    <i data-lucide="folder-open"></i>
+                    <h3 id="cat-empty-title">No hay categorías para mostrar</h3>
+                    <p id="cat-empty-desc">La lista fija no pudo renderizarse correctamente.</p>
+                </div>
+            </section>
+
+            <aside class="selection-panel">
+                <div class="selection-panel-header">
+                    <h3 id="cat-selection-title">Selección actual</h3>
+                    <span id="selection-counter">0 elegidas</span>
+                </div>
+                <div id="selection-list" class="selection-list"></div>
+                <p class="selection-help" id="cat-selection-help">La selección se usa como filtro de comparación contra la matriz del CSV.</p>
+                <div class="selection-panel-actions">
+                    <button class="btn btn-primary btn-compact" id="use-selection-btn" type="button">
+                        <i data-lucide="layers"></i>
+                        <span id="cat-compare-btn-text">Comparar</span>
+                    </button>
+                    <button class="btn btn-outline btn-compact" id="filter-in-explorer-btn" type="button" title="Ver estos genes en el explorador principal">
+                        <i data-lucide="filter"></i>
+                        <span id="cat-filter-explorer-text">Filtrar en el Explorador</span>
+                    </button>
+                    <button class="btn btn-outline btn-compact" id="clear-selection-btn" type="button">Limpiar selección</button>
+                </div>
+            </aside>
+        </main>
+
+        <section class="comparison-results" id="comparison-results" style="display:none;">
+            <div class="comparison-results-header">
+                <div>
+                    <h3 id="cat-results-title">Resultado de comparación</h3>
+                    <p id="comparison-summary">Selecciona categorías y pulsa comparar.</p>
+                </div>
+                <div class="results-toolbar-actions">
+                    <div class="search-input-wrapper compact">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input type="text" id="matrix-search-input" placeholder="Filtrar resultados...">
+                    </div>
+                    <button class="btn btn-outline btn-compact" id="download-matrix-csv" type="button" title="Descargar matriz en CSV">
+                        <i data-lucide="download"></i>
+                        <span id="matrix-download-text">Exportar CSV</span>
+                    </button>
+                    <button class="btn btn-outline btn-compact" id="reset-results-btn" type="button">Ocultar resultado</button>
+                </div>
+            </div>
+            <div class="comparison-table-wrap">
+                <table class="comparison-table" id="comparison-table"></table>
+            </div>
+        </section>
+
+        <!-- About Modal -->
+        <div class="modal-overlay" id="about-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-circle-info"></i> <span id="about-modal-title">Acerca de la herramienta</span></h3>
+                    <button class="close-btn" id="about-modal-close" title="Cerrar">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Quiénes somos -->
+                    <div class="tech-item about-section">
+                        <h4><i class="fa-solid fa-users"></i> <span id="about-who-title">Quiénes somos</span></h4>
+                        <p id="about-who-desc">Desarrollado por <strong>Lorenzo Erra</strong> — Bioinformático / Genómico Clínico, como recurso educativo de la <strong>Escuela de Genómica Clínica (EGC)</strong>, un espacio de formación avanzada en genómica, bioinformática y medicina de precisión.</p>
+                        <p class="about-note">
+                            <i class="fa-solid fa-link"></i> <strong>EGC:</strong>
+                            <a href="http://bioinfo.qb.fcen.uba.ar/" target="_blank" class="about-link">Escuela de Genómica Clínica</a>
+                        </p>
+                    </div>
+
+                    <!-- Cafecito / Feedback -->
+                    <div class="tech-item about-contact">
+                        <h4><i class="fa-solid fa-mug-hot"></i> <span id="about-contact-title">Feedback & Contacto</span></h4>
+                        <p id="about-contact-desc">¿Encontraste un error, tenés una sugerencia o querés colaborar con el proyecto? Tu feedback ayuda a mejorar la herramienta para toda la comunidad.</p>
+                        <div class="about-actions">
+                            <a href="https://docs.google.com/forms/d/e/1FAIpQLSfqkkfVOFaeELg_SQlnvYCNEEtaznLh4n85iVtqSdnQD7DdSw/viewform?usp=preview"
+                                target="_blank" class="about-btn about-btn--primary">
+                                <i class="fa-solid fa-envelope"></i> <span id="about-feedback-btn">Enviar Feedback</span>
+                            </a>
+                            <a href="https://cafecito.app/lorerra" target="_blank" rel="noopener"
+                                id="cafecitoBtnPlaceholder" class="about-btn about-btn--coffee">
+                                <i class="fa-solid fa-mug-hot"></i> <span id="about-coffee-btn">Invitarme un cafecito ☕</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="categorias.js"></script>
+</body>
+</html>
