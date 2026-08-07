@@ -2395,3 +2395,177 @@ body.light-theme .moon-icon { display: none; }
     color: var(--text-card-purple);
 }
 
+/* --- Header Logo Link --- */
+.header-logo-link {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform var(--transition-fast);
+}
+
+.header-logo-link:hover .app-logo-img {
+    transform: scale(1.06);
+    filter: drop-shadow(0 6px 18px rgba(99, 102, 241, 0.5));
+}
+
+/* --- Alias Copy Button --- */
+.about-btn--alias {
+    background-color: rgba(16, 185, 129, 0.12);
+    color: #34d399;
+    border: 1px solid rgba(52, 211, 153, 0.3);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.about-btn--alias:hover {
+    background-color: rgba(16, 185, 129, 0.25);
+    border-color: #34d399;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+/* --- Radar Chart Visualization Card --- */
+.radar-chart-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-md);
+}
+
+.radar-chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+}
+
+.radar-title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.radar-icon-badge {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.2));
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.radar-title-group h4 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.radar-title-group p {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+}
+
+.radar-canvas-container {
+    position: relative;
+    width: 100%;
+    height: 380px;
+}
+
+/* --- Patient Entity Card --- */
+.patient-entity-card {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(239, 68, 68, 0.08));
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.patient-entity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.patient-entity-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.patient-avatar-badge {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(245, 158, 11, 0.25);
+    color: #fbbf24;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    border: 1px solid rgba(245, 158, 11, 0.5);
+}
+
+.patient-entity-title h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fbbf24;
+    margin-bottom: 2px;
+}
+
+.patient-entity-title p {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+}
+
+.patient-entity-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.patient-tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: rgba(245, 158, 11, 0.2);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    color: #fef3c7;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    transition: all var(--transition-fast);
+}
+
+.patient-tag-chip.tag-removeable {
+    cursor: pointer;
+}
+
+.patient-tag-chip.tag-removeable:hover {
+    background-color: rgba(239, 68, 68, 0.3);
+    border-color: #ef4444;
+    color: #ffffff;
+}
+
+.patient-tag-remove-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.2);
+    font-size: 0.75rem;
+}
+

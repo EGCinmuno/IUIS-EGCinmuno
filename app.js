@@ -1,4 +1,14 @@
 // Application state
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 let database = [];          // Current active dataset
 let filteredData = [];      // Filtered rows
 let activeFilters = {       // Active filter values
@@ -158,10 +168,11 @@ document.addEventListener('DOMContentLoaded', () => {
         showNoDataState();
     }
     
-    // 3. Setup UI Events & About Modal
+    // 3. Setup UI Events & About Modal & Patient Entity
     initUiEvents();
     initAboutModal();
     initIgCalcModal();
+    renderPatientEntityCardIndex();
 });
 
 /* --- Core Theme & Language Functions --- */
@@ -350,12 +361,26 @@ function initAboutModal() {
     
     if (!aboutModal) return;
     
+    const resetCafecitoBtn = () => {
+        const cafecitoAliasBtn = document.getElementById('cafecito-alias-btn');
+        if (cafecitoAliasBtn) {
+            cafecitoAliasBtn.innerHTML = `
+                <i class="fa-solid fa-mug-hot" id="cafecito-icon"></i>
+                <span id="cafecito-btn-text">Invitarme un cafecito ☕</span>
+            `;
+            cafecitoAliasBtn.style.borderColor = '';
+            cafecitoAliasBtn.style.backgroundColor = '';
+        }
+    };
+
     const openModal = () => {
+        resetCafecitoBtn();
         aboutModal.classList.add('open');
     };
     
     const closeModal = () => {
         aboutModal.classList.remove('open');
+        resetCafecitoBtn();
     };
     
     if (aboutBtn) aboutBtn.addEventListener('click', openModal);
@@ -370,6 +395,20 @@ function initAboutModal() {
             closeModal();
         }
     });
+
+    const cafecitoAliasBtn = document.getElementById('cafecito-alias-btn');
+    if (cafecitoAliasBtn) {
+        cafecitoAliasBtn.addEventListener('click', () => {
+            const aliasText = 'loren.erra.mp';
+            navigator.clipboard.writeText(aliasText).then(() => {
+                cafecitoAliasBtn.style.backgroundColor = '#10b981';
+                cafecitoAliasBtn.style.color = '#ffffff';
+                cafecitoAliasBtn.innerHTML = `<i class="fa-solid fa-check" style="color:#ffffff;"></i> <span>Alias MP: <strong>loren.erra.mp</strong> (¡Copiado! ✓)</span>`;
+            }).catch(err => {
+                console.error("Error al copiar alias:", err);
+            });
+        });
+    }
 
     // Auto-open on startup after brief delay
     setTimeout(openModal, 600);
@@ -1272,6 +1311,16 @@ function initIgCalcModal() {
     if (!calcBtn || !modal) return;
 
     const openModal = () => {
+        const profile = getPatientProfile();
+        if (profile) {
+            if (ageSelect && profile.age) ageSelect.value = profile.age;
+            if (iggInput && profile.igg !== undefined) iggInput.value = isNaN(profile.igg) ? '' : profile.igg;
+            if (igaInput && profile.iga !== undefined) igaInput.value = isNaN(profile.iga) ? '' : profile.iga;
+            if (igmInput && profile.igm !== undefined) igmInput.value = isNaN(profile.igm) ? '' : profile.igm;
+            if (tcellInput && profile.tcell !== undefined) tcellInput.value = isNaN(profile.tcell) ? '' : profile.tcell;
+            if (bcellInput && profile.bcell !== undefined) bcellInput.value = isNaN(profile.bcell) ? '' : profile.bcell;
+            if (neutInput && profile.neutrophils !== undefined) neutInput.value = isNaN(profile.neutrophils) ? '' : profile.neutrophils;
+        }
         modal.classList.add('open');
         updateIgCalcTable();
     };
@@ -1296,7 +1345,9 @@ function initIgCalcModal() {
             [iggInput, igaInput, igmInput, tcellInput, bcellInput, neutInput].forEach(i => {
                 if (i) i.value = '';
             });
+            savePatientProfile(null);
             updateIgCalcTable();
+            renderPatientEntityCardIndex();
         });
     }
 
@@ -1336,7 +1387,8 @@ function initIgCalcModal() {
             }
 
             // 2. T-Cells (Low / Decreased)
-            if (!isNaN(tcellVal) && tcellVal < ref.tcell[0]) {
+            const isTLow = !isNaN(tcellVal) && tcellVal < ref.tcell[0];
+            if (isTLow) {
                 const lowT = allTCells.filter(v => {
                     const l = v.toLowerCase();
                     return l.includes('low') || l.includes('disminuid') || l.includes('ausenc') || l.includes('profound') || l.includes('decrease') || l.includes('lack');
@@ -1345,7 +1397,8 @@ function initIgCalcModal() {
             }
 
             // 3. B-Cells (Low / Decreased)
-            if (!isNaN(bcellVal) && bcellVal < ref.bcell[0]) {
+            const isBLow = !isNaN(bcellVal) && bcellVal < ref.bcell[0];
+            if (isBLow) {
                 const lowB = allBCells.filter(v => {
                     const l = v.toLowerCase();
                     return l.includes('low') || l.includes('disminuid') || l.includes('ausenc') || l.includes('decrease') || l.includes('absent') || l.includes('rare');
@@ -1354,7 +1407,8 @@ function initIgCalcModal() {
             }
 
             // 4. Neutrophils (Low / Decreased)
-            if (!isNaN(neutVal) && neutVal < ref.neutrophils[0]) {
+            const isNeutLow = !isNaN(neutVal) && neutVal < ref.neutrophils[0];
+            if (isNeutLow) {
                 const lowNeut = allNeutrophils.filter(v => {
                     const l = v.toLowerCase();
                     return l.includes('low') || l.includes('neutropenia') || l.includes('disminuid') || l.includes('ausenc') || l.includes('decrease');
@@ -1362,12 +1416,199 @@ function initIgCalcModal() {
                 activeFilters.neutrophils = lowNeut.length > 0 ? lowNeut : allNeutrophils;
             }
 
+            const currentProfile = getPatientProfile() || {};
+            const catsSet = new Set(currentProfile.categories || []);
+
+            if (isIgLow) {
+                catsSet.add('Hipo');
+                catsSet.add('LB_Antibody');
+            }
+            if (isTLow) {
+                catsSet.add('Linfopenia T');
+            }
+            if (isBLow) {
+                catsSet.add('Linfopenia B');
+            }
+            if (isNeutLow) {
+                catsSet.add('Infecciones');
+            }
+
+            // Save patient lab profile to localStorage for comparison view
+            savePatientProfile({
+                ...currentProfile,
+                age: ageKey,
+                igg: isNaN(iggVal) ? undefined : iggVal,
+                iga: isNaN(igaVal) ? undefined : igaVal,
+                igm: isNaN(igmVal) ? undefined : igmVal,
+                tcell: isNaN(tcellVal) ? undefined : tcellVal,
+                bcell: isNaN(bcellVal) ? undefined : bcellVal,
+                neutrophils: isNaN(neutVal) ? undefined : neutVal,
+                isIgLow: isIgLow,
+                isTLow: isTLow,
+                isBLow: isBLow,
+                isNeutLow: isNeutLow,
+                categories: Array.from(catsSet)
+            });
+
             closeModal();
             buildFilterSelects();
             applyFiltersAndRender();
+            renderPatientEntityCardIndex();
         });
     }
 }
+
+function getPatientProfile() {
+    let profile = {};
+    const raw = localStorage.getItem('iei.patientProfile');
+    if (raw) {
+        try { profile = JSON.parse(raw) || {}; } catch (e) {}
+    }
+
+    const rawSel = localStorage.getItem('iei_category_selection');
+    if (rawSel) {
+        try {
+            const arr = JSON.parse(rawSel);
+            if (Array.isArray(arr) && arr.length > 0) {
+                profile.categories = arr;
+            }
+        } catch (e) {}
+    }
+
+    return profile;
+}
+
+function savePatientProfile(profile) {
+    if (!profile) {
+        localStorage.removeItem('iei.patientProfile');
+        localStorage.removeItem('iei_category_selection');
+    } else {
+        if (profile.categories !== undefined) {
+            localStorage.setItem('iei_category_selection', JSON.stringify(profile.categories));
+        }
+        localStorage.setItem('iei.patientProfile', JSON.stringify(profile));
+    }
+}
+
+function renderPatientEntityCardIndex() {
+    const card = document.getElementById('patient-entity-card');
+    const tagsContainer = document.getElementById('patient-entity-tags');
+    if (!card || !tagsContainer) return;
+
+    const profile = getPatientProfile();
+    const hasData = profile && (profile.age || !isNaN(profile.igg) || !isNaN(profile.iga) || !isNaN(profile.tcell) || !isNaN(profile.bcell) || !isNaN(profile.neutrophils) || (profile.categories && profile.categories.length > 0));
+
+    if (!hasData) {
+        card.style.display = 'none';
+        tagsContainer.innerHTML = '';
+        return;
+    }
+
+    card.style.display = 'block';
+    tagsContainer.innerHTML = buildPatientEntityTags(profile, 'removePatientTagIndex');
+
+    const clearBtn = document.getElementById('clear-patient-btn');
+    if (clearBtn && !clearBtn.dataset.bound) {
+        clearBtn.dataset.bound = "true";
+        clearBtn.addEventListener('click', () => {
+            savePatientProfile(null);
+            resetAllFilters();
+            renderPatientEntityCardIndex();
+        });
+    }
+}
+
+function buildPatientEntityTags(profile, onRemoveFnName) {
+    if (!profile) return '';
+    const tags = [];
+
+    const AGE_LABELS = {
+        '0-1m': 'Neonato (0-1m)',
+        '2-5m': 'Lactante (2-5m)',
+        '6-12m': 'Lactante (6-12m)',
+        '1-3y': 'Infante (1-3a)',
+        '4-6y': 'Infante (4-6a)',
+        '7-11y': 'Escolar (7-11a)',
+        '12-16y': 'Adolescente (12-16a)',
+        'adult': 'Adulto (≥18a)'
+    };
+
+    if (profile.age) {
+        const label = AGE_LABELS[profile.age] || profile.age;
+        tags.push(`<span class="patient-tag-chip"><i class="fa-solid fa-calendar-day"></i> Edad: ${escapeHtml(label)}</span>`);
+    }
+
+    if (profile.igg !== undefined && !isNaN(profile.igg)) {
+        const st = profile.isIgLow ? 'Bajo' : 'Normal';
+        const icon = profile.isIgLow ? 'fa-arrow-down' : 'fa-check';
+        tags.push(`<span class="patient-tag-chip tag-removeable" onclick="${onRemoveFnName}('igg');" title="Clic para remover IgG"><i class="fa-solid ${icon}"></i> IgG: ${profile.igg} mg/dL (${st}) <span class="patient-tag-remove-btn">×</span></span>`);
+    }
+
+    if (profile.iga !== undefined && !isNaN(profile.iga)) {
+        const st = profile.isIgLow ? 'Bajo' : 'Normal';
+        const icon = profile.isIgLow ? 'fa-arrow-down' : 'fa-check';
+        tags.push(`<span class="patient-tag-chip tag-removeable" onclick="${onRemoveFnName}('iga');" title="Clic para remover IgA"><i class="fa-solid ${icon}"></i> IgA: ${profile.iga} mg/dL (${st}) <span class="patient-tag-remove-btn">×</span></span>`);
+    }
+
+    if (profile.tcell !== undefined && !isNaN(profile.tcell)) {
+        const st = profile.isTLow ? 'Disminuido' : 'Normal';
+        const icon = profile.isTLow ? 'fa-arrow-down' : 'fa-check';
+        tags.push(`<span class="patient-tag-chip tag-removeable" onclick="${onRemoveFnName}('tcell');" title="Clic para remover T-CD3+"><i class="fa-solid ${icon}"></i> Linfocitos T: ${profile.tcell}/mm³ (${st}) <span class="patient-tag-remove-btn">×</span></span>`);
+    }
+
+    if (profile.bcell !== undefined && !isNaN(profile.bcell)) {
+        const st = profile.isBLow ? 'Disminuido' : 'Normal';
+        const icon = profile.isBLow ? 'fa-arrow-down' : 'fa-check';
+        tags.push(`<span class="patient-tag-chip tag-removeable" onclick="${onRemoveFnName}('bcell');" title="Clic para remover B-CD19+"><i class="fa-solid ${icon}"></i> Linfocitos B: ${profile.bcell}/mm³ (${st}) <span class="patient-tag-remove-btn">×</span></span>`);
+    }
+
+    if (profile.neutrophils !== undefined && !isNaN(profile.neutrophils)) {
+        const st = profile.isNeutLow ? 'Neutropenia' : 'Normal';
+        const icon = profile.isNeutLow ? 'fa-arrow-down' : 'fa-check';
+        tags.push(`<span class="patient-tag-chip tag-removeable" onclick="${onRemoveFnName}('neutrophils');" title="Clic para remover Neutrófilos"><i class="fa-solid ${icon}"></i> Neutrófilos: ${profile.neutrophils}/mm³ (${st}) <span class="patient-tag-remove-btn">×</span></span>`);
+    }
+
+    if (profile.categories && profile.categories.length > 0) {
+        profile.categories.forEach(cat => {
+            tags.push(`<span class="patient-tag-chip tag-removeable" onclick="${onRemoveFnName}('cat_${escapeHtml(cat)}');" title="Clic para desmarcar categoría"><i class="fa-solid fa-layer-group"></i> ${escapeHtml(cat)} <span class="patient-tag-remove-btn">×</span></span>`);
+        });
+    }
+
+    return tags.join('');
+}
+
+function removePatientTagIndex(key) {
+    const profile = getPatientProfile();
+    if (!profile) return;
+
+    if (key.startsWith('cat_')) {
+        const catName = key.replace('cat_', '');
+        profile.categories = (profile.categories || []).filter(c => c !== catName);
+    } else if (key === 'igg') {
+        profile.igg = undefined;
+    } else if (key === 'iga') {
+        profile.iga = undefined;
+    } else if (key === 'tcell') {
+        profile.tcell = undefined;
+        profile.isTLow = false;
+        activeFilters.tCell = [];
+    } else if (key === 'bcell') {
+        profile.bcell = undefined;
+        profile.isBLow = false;
+        activeFilters.bCell = [];
+    } else if (key === 'neutrophils') {
+        profile.neutrophils = undefined;
+        profile.isNeutLow = false;
+        activeFilters.neutrophils = [];
+    }
+
+    savePatientProfile(profile);
+    buildFilterSelects();
+    applyFiltersAndRender();
+    renderPatientEntityCardIndex();
+}
+
+window.removePatientTagIndex = removePatientTagIndex;
 
 function updateIgCalcTable() {
     const ageSelect = document.getElementById('ig-calc-age');

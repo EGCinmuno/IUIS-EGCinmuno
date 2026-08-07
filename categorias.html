@@ -1,28 +1,36 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Selector de Categorías IEI</title>
+    <title>Interactive IEI</title>
     <meta name="description" content="Selecciona categorías y compáralas contra la matriz de Categorias_desglosed.csv.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="icon" type="image/png" href="Logo.png">
     <link rel="shortcut icon" href="Logo.png">
     <link rel="stylesheet" href="styles.css?v=1.2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="categorias_desglosed_data.js?v=1.2"></script>
 </head>
+
 <body class="dark-theme comparison-page">
     <div class="app-container">
         <header class="app-header">
             <div class="header-logo-section">
-                <img src="Logo.png" alt="IEI Logo" class="app-logo-img">
+                <a href="index.html" class="header-logo-link" title="Volver al inicio / Explorador de Genes">
+                    <img src="Logo.png" alt="IEI Logo" class="app-logo-img">
+                </a>
                 <div class="header-text">
                     <h1 id="cat-hdr-title">Selector de Categorías</h1>
-                    <p class="subtitle" id="cat-hdr-subtitle">Haz clic en las categorías desglosadas para preparar una comparación</p>
+                    <p class="subtitle" id="cat-hdr-subtitle">Haz clic en las categorías desglosadas para preparar una
+                        comparación</p>
                 </div>
             </div>
 
@@ -48,7 +56,7 @@
             <div>
                 <p class="comparison-kicker" id="cat-hero-kicker">Base predefinida</p>
                 <h2 id="cat-hero-title">Categorías del comparador</h2>
-                <p class="comparison-copy" id="cat-hero-copy">Selecciona una o varias categorías y pulsa comparar para ver el versus contra la matriz de <strong>Categorias_desglosed.csv</strong>.</p>
+                <p class="comparison-copy" id="cat-hero-copy">Selecciona una o varias categorías y pulsa comparar</p>
             </div>
             <div class="comparison-hero-meta">
                 <div class="meta-card">
@@ -62,6 +70,30 @@
             </div>
         </section>
 
+        <!-- Patient Entity Card -->
+        <div class="patient-entity-card" id="patient-entity-card" style="display: none;">
+            <div class="patient-entity-header">
+                <div class="patient-entity-title">
+                    <div class="patient-avatar-badge">
+                        <i class="fa-solid fa-user-doctor"></i>
+                    </div>
+                    <div>
+                        <h4>Entidad Paciente Precargada</h4>
+                        <p id="patient-entity-subtitle">Valores e indicadores incorporados a la ficha activa</p>
+                    </div>
+                </div>
+                <div class="patient-entity-actions">
+                    <button class="btn btn-outline btn-compact" id="clear-patient-btn" type="button"
+                        title="Vaciar ficha y remover todos los valores precargados del paciente">
+                        <i class="fa-solid fa-user-slash"></i> Vaciar Paciente
+                    </button>
+                </div>
+            </div>
+            <div class="patient-entity-tags" id="patient-entity-tags">
+                <!-- Dynamic patient entity tags rendered here -->
+            </div>
+        </div>
+
         <section class="comparison-toolbar">
             <label class="category-search-box" for="category-search">
                 <i data-lucide="search"></i>
@@ -71,7 +103,8 @@
 
         <!-- Presets Section -->
         <section class="presets-section">
-            <span class="presets-label"><i data-lucide="sparkles"></i> <span id="preset-label-text">Presets rápidos:</span></span>
+            <span class="presets-label"><i data-lucide="sparkles"></i> <span id="preset-label-text">Presets
+                    rápidos:</span></span>
             <div class="presets-chips">
                 <button type="button" class="preset-btn" data-preset="lymphopenia">🧬 Linfopenias</button>
                 <button type="button" class="preset-btn" data-preset="infections">🦠 Infecciones / Resp.</button>
@@ -96,17 +129,20 @@
                     <span id="selection-counter">0 elegidas</span>
                 </div>
                 <div id="selection-list" class="selection-list"></div>
-                <p class="selection-help" id="cat-selection-help">La selección se usa como filtro de comparación contra la matriz del CSV.</p>
+                <p class="selection-help" id="cat-selection-help">La selección se usa como filtro de comparación contra
+                    la matriz del CSV.</p>
                 <div class="selection-panel-actions">
                     <button class="btn btn-primary btn-compact" id="use-selection-btn" type="button">
                         <i data-lucide="layers"></i>
                         <span id="cat-compare-btn-text">Comparar</span>
                     </button>
-                    <button class="btn btn-outline btn-compact" id="filter-in-explorer-btn" type="button" title="Ver estos genes en el explorador principal">
+                    <button class="btn btn-outline btn-compact" id="filter-in-explorer-btn" type="button"
+                        title="Ver estos genes en el explorador principal">
                         <i data-lucide="filter"></i>
                         <span id="cat-filter-explorer-text">Filtrar en el Explorador</span>
                     </button>
-                    <button class="btn btn-outline btn-compact" id="clear-selection-btn" type="button">Limpiar selección</button>
+                    <button class="btn btn-outline btn-compact" id="clear-selection-btn" type="button">Limpiar
+                        selección</button>
                 </div>
             </aside>
         </main>
@@ -118,17 +154,35 @@
                     <p id="comparison-summary">Selecciona categorías y pulsa comparar.</p>
                 </div>
                 <div class="results-toolbar-actions">
-                    <div class="search-input-wrapper compact">
-                        <i data-lucide="search" class="search-icon"></i>
-                        <input type="text" id="matrix-search-input" placeholder="Filtrar resultados...">
-                    </div>
-                    <button class="btn btn-outline btn-compact" id="download-matrix-csv" type="button" title="Descargar matriz en CSV">
-                        <i data-lucide="download"></i>
-                        <span id="matrix-download-text">Exportar CSV</span>
+                    <button class="btn btn-outline btn-compact" id="toggle-similarity-mode-btn" type="button"
+                        style="display: none;" title="Alternar entre ver la subtabla más parecida o ver todas">
+                        <i data-lucide="sparkles"></i>
+                        <span id="similarity-mode-text">Ver subtabla más similar</span>
                     </button>
-                    <button class="btn btn-outline btn-compact" id="reset-results-btn" type="button">Ocultar resultado</button>
+                    <button class="btn btn-outline btn-compact" id="reset-results-btn" type="button">Ocultar
+                        resultado</button>
                 </div>
             </div>
+
+            <!-- Interactive Radar Chart Comparison -->
+            <div class="radar-chart-card" id="radar-chart-card">
+                <div class="radar-chart-header">
+                    <div class="radar-title-group">
+                        <div class="radar-icon-badge">
+                            <i class="fa-solid fa-chart-pie"></i>
+                        </div>
+                        <div>
+                            <h4>Perfil Comparativo Radar</h4>
+                            <p>Superposición visual de afectación clínica y celular (%) de las subtablas seleccionadas
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="radar-canvas-container">
+                    <canvas id="comparisonRadarCanvas"></canvas>
+                </div>
+            </div>
+
             <div class="comparison-table-wrap">
                 <table class="comparison-table" id="comparison-table"></table>
             </div>
@@ -138,7 +192,8 @@
         <div class="modal-overlay" id="about-modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3><i class="fa-solid fa-circle-info"></i> <span id="about-modal-title">Acerca de la herramienta</span></h3>
+                    <h3><i class="fa-solid fa-circle-info"></i> <span id="about-modal-title">Acerca de la
+                            herramienta</span></h3>
                     <button class="close-btn" id="about-modal-close" title="Cerrar">
                         <i data-lucide="x"></i>
                     </button>
@@ -147,26 +202,29 @@
                     <!-- Quiénes somos -->
                     <div class="tech-item about-section">
                         <h4><i class="fa-solid fa-users"></i> <span id="about-who-title">Quiénes somos</span></h4>
-                        <p id="about-who-desc">Desarrollado por <strong>Lorenzo Erra</strong> — Bioinformático / Genómico Clínico, como recurso educativo de la <strong>Escuela de Genómica Clínica (EGC)</strong>, un espacio de formación avanzada en genómica, bioinformática y medicina de precisión.</p>
-                        <p class="about-note">
-                            <i class="fa-solid fa-link"></i> <strong>EGC:</strong>
-                            <a href="http://bioinfo.qb.fcen.uba.ar/" target="_blank" class="about-link">Escuela de Genómica Clínica</a>
+                        <p id="about-who-desc">Desarrollado por <strong>Lorenzo Erra</strong> — Bioinformático /
+                            Genómico Clínico, como recurso educativo de genómica y medicina de precisión. Basado en el
+                            <strong>reporte de la IUIS</strong>.
                         </p>
                     </div>
 
-                    <!-- Cafecito / Feedback -->
+                    <!-- Cafecito / Feedback / Alias -->
                     <div class="tech-item about-contact">
-                        <h4><i class="fa-solid fa-mug-hot"></i> <span id="about-contact-title">Feedback & Contacto</span></h4>
-                        <p id="about-contact-desc">¿Encontraste un error, tenés una sugerencia o querés colaborar con el proyecto? Tu feedback ayuda a mejorar la herramienta para toda la comunidad.</p>
+                        <h4><i class="fa-solid fa-mug-hot"></i> <span id="about-contact-title">Feedback &
+                                Contacto</span></h4>
+                        <p id="about-contact-desc">¿Encontraste un error, tenés una sugerencia o querés colaborar con el
+                            proyecto? Tu feedback ayuda a mejorar la herramienta para toda la comunidad.</p>
                         <div class="about-actions">
                             <a href="https://docs.google.com/forms/d/e/1FAIpQLSfqkkfVOFaeELg_SQlnvYCNEEtaznLh4n85iVtqSdnQD7DdSw/viewform?usp=preview"
                                 target="_blank" class="about-btn about-btn--primary">
-                                <i class="fa-solid fa-envelope"></i> <span id="about-feedback-btn">Enviar Feedback</span>
+                                <i class="fa-solid fa-envelope"></i> <span id="about-feedback-btn">Enviar
+                                    Feedback</span>
                             </a>
-                            <a href="https://cafecito.app/lorerra" target="_blank" rel="noopener"
-                                id="cafecitoBtnPlaceholder" class="about-btn about-btn--coffee">
-                                <i class="fa-solid fa-mug-hot"></i> <span id="about-coffee-btn">Invitarme un cafecito ☕</span>
-                            </a>
+                            <button class="about-btn about-btn--coffee" id="cafecito-alias-btn" type="button"
+                                title="Haz clic para ver y copiar el Alias de Mercado Pago (0% comisión)">
+                                <i class="fa-solid fa-mug-hot" id="cafecito-icon"></i>
+                                <span id="cafecito-btn-text">Invitarme un cafecito ☕</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -176,4 +234,5 @@
 
     <script src="categorias.js?v=1.2"></script>
 </body>
+
 </html>

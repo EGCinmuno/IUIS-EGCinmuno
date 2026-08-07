@@ -4,8 +4,9 @@ const CATEGORY_DEFINITIONS = [
     { label: 'Linfopenia T', csvKeys: ['LT'] },
     { label: 'Linfopenia B', csvKeys: ['LB_Compromiso'] },
     { label: 'LB_Antibody', csvKeys: ['LB_Antibody'] },
-    { label: 'Hipo', csvKeys: [] },
-    { label: 'Hiper', csvKeys: [] },
+    { label: 'Hipo', csvKeys: ['LB_Antibody'] },
+    { label: 'Hipo (Hipogammaglobulinemia)', csvKeys: ['LB_Antibody'] },
+    { label: 'Hiper', csvKeys: ['LB_Antibody'] },
     { label: 'NK', csvKeys: ['NK'] },
     { label: 'Inf_Resp_Bajas', csvKeys: ['Broncopulmonares'] },
     { label: 'Infecciones', csvKeys: ['Infecciones'] },
@@ -48,7 +49,7 @@ const I18N_CATEGORIAS = {
         backBtn: 'Volver al explorador',
         heroKicker: 'Base predefinida',
         heroTitle: 'Categorías del comparador',
-        heroCopy: 'Selecciona una o varias categorías y pulsa comparar para ver el versus contra la matriz de <strong>Categorias_desglosed.csv</strong>.',
+        heroCopy: 'Selecciona una o varias categorías y pulsa comparar para ver el versus.',
         metaCategories: 'Categorías',
         metaSelected: 'Seleccionadas',
         presetLabel: 'Presets rápidos:',
@@ -87,7 +88,7 @@ const I18N_CATEGORIAS = {
         detailsMissing: (n) => `${n} sin mapeo directo`,
         aboutTitle: 'Acerca de la herramienta',
         aboutWhoTitle: 'Quiénes somos',
-        aboutWhoDesc: 'Desarrollado por <strong>Lorenzo Erra</strong> — Bioinformático / Genómico Clínico, como recurso educativo de la <strong>Escuela de Genómica Clínica (EGC)</strong>, un espacio de formación avanzada en genómica, bioinformática y medicina de precisión.',
+        aboutWhoDesc: 'Desarrollado por <strong>Lorenzo Erra</strong> — Bioinformático / Genómico Clínico, como recurso educativo de genómica y medicina de precisión. Basado en el <strong>reporte de la IUIS</strong>.',
         aboutContactTitle: 'Feedback & Contacto',
         aboutContactDesc: '¿Encontraste un error, tenés una sugerencia o querés colaborar con el proyecto? Tu feedback ayuda a mejorar la herramienta para toda la comunidad.',
         aboutFeedbackBtn: 'Enviar Feedback',
@@ -100,7 +101,7 @@ const I18N_CATEGORIAS = {
         backBtn: 'Back to explorer',
         heroKicker: 'Predefined Dataset',
         heroTitle: 'Comparator Categories',
-        heroCopy: 'Select one or more categories and click compare to view the matrix breakdown against <strong>Categorias_desglosed.csv</strong>.',
+        heroCopy: 'Select one or more categories and click compare to view the matrix breakdown.',
         metaCategories: 'Categories',
         metaSelected: 'Selected',
         presetLabel: 'Quick Presets:',
@@ -170,6 +171,160 @@ function initTheme() {
     });
 }
 
+function getPatientProfile() {
+    let profile = {};
+    const raw = localStorage.getItem('iei.patientProfile');
+    if (raw) {
+        try { profile = JSON.parse(raw) || {}; } catch (e) { }
+    }
+
+    const rawSel = localStorage.getItem('iei_category_selection');
+    if (rawSel) {
+        try {
+            const arr = JSON.parse(rawSel);
+            if (Array.isArray(arr) && arr.length > 0) {
+                profile.categories = arr;
+            }
+        } catch (e) { }
+    }
+
+    return profile;
+}
+
+function savePatientProfile(profile) {
+    if (!profile) {
+        localStorage.removeItem('iei.patientProfile');
+        localStorage.removeItem('iei_category_selection');
+    } else {
+        if (profile.categories !== undefined) {
+            localStorage.setItem('iei_category_selection', JSON.stringify(profile.categories));
+        }
+        localStorage.setItem('iei.patientProfile', JSON.stringify(profile));
+    }
+}
+
+function renderPatientEntityCard() {
+    const card = document.getElementById('patient-entity-card');
+    const tagsContainer = document.getElementById('patient-entity-tags');
+    if (!card || !tagsContainer) return;
+
+    const profile = getPatientProfile();
+    const hasData = profile && (profile.age || !isNaN(profile.igg) || !isNaN(profile.iga) || !isNaN(profile.tcell) || !isNaN(profile.bcell) || !isNaN(profile.neutrophils) || (profile.categories && profile.categories.length > 0));
+
+    if (!hasData) {
+        card.style.display = 'none';
+        tagsContainer.innerHTML = '';
+        return;
+    }
+
+    card.style.display = 'block';
+    tagsContainer.innerHTML = buildPatientEntityTags(profile, 'removePatientTag');
+
+    const clearBtn = document.getElementById('clear-patient-btn');
+    if (clearBtn && !clearBtn.dataset.bound) {
+        clearBtn.dataset.bound = "true";
+        clearBtn.addEventListener('click', () => {
+            savePatientProfile(null);
+            selectedCategories.clear();
+            renderBrowser();
+            renderSelectionPanel();
+            renderPatientEntityCard();
+            renderComparisonResults();
+        });
+    }
+}
+
+function buildPatientEntityTags(profile, onRemoveFnName) {
+    if (!profile) return '';
+    const tags = [];
+
+    const AGE_LABELS = {
+        '0-1m': 'Neonato (0-1m)',
+        '2-5m': 'Lactante (2-5m)',
+        '6-12m': 'Lactante (6-12m)',
+        '1-3y': 'Infante (1-3a)',
+        '4-6y': 'Infante (4-6a)',
+        '7-11y': 'Escolar (7-11a)',
+        '12-16y': 'Adolescente (12-16a)',
+        'adult': 'Adulto (≥18a)'
+    };
+
+    if (profile.age) {
+        const label = AGE_LABELS[profile.age] || profile.age;
+        tags.push(`<span class="patient-tag-chip"><i class="fa-solid fa-calendar-day"></i> Edad: ${escapeHtml(label)}</span>`);
+    }
+
+    if (profile.igg !== undefined && !isNaN(profile.igg)) {
+        const st = profile.isIgLow ? 'Bajo' : 'Normal';
+        const icon = profile.isIgLow ? 'fa-arrow-down' : 'fa-check';
+        tags.push(`<span class="patient-tag-chip tag-removeable" onclick="${onRemoveFnName}('igg');" title="Clic para remover IgG"><i class="fa-solid ${icon}"></i> IgG: ${profile.igg} mg/dL (${st}) <span class="patient-tag-remove-btn">×</span></span>`);
+    }
+
+    if (profile.iga !== undefined && !isNaN(profile.iga)) {
+        const st = profile.isIgLow ? 'Bajo' : 'Normal';
+        const icon = profile.isIgLow ? 'fa-arrow-down' : 'fa-check';
+        tags.push(`<span class="patient-tag-chip tag-removeable" onclick="${onRemoveFnName}('iga');" title="Clic para remover IgA"><i class="fa-solid ${icon}"></i> IgA: ${profile.iga} mg/dL (${st}) <span class="patient-tag-remove-btn">×</span></span>`);
+    }
+
+    if (profile.tcell !== undefined && !isNaN(profile.tcell)) {
+        const st = profile.isTLow ? 'Disminuido' : 'Normal';
+        const icon = profile.isTLow ? 'fa-arrow-down' : 'fa-check';
+        tags.push(`<span class="patient-tag-chip tag-removeable" onclick="${onRemoveFnName}('tcell');" title="Clic para remover T-CD3+"><i class="fa-solid ${icon}"></i> Linfocitos T: ${profile.tcell}/mm³ (${st}) <span class="patient-tag-remove-btn">×</span></span>`);
+    }
+
+    if (profile.bcell !== undefined && !isNaN(profile.bcell)) {
+        const st = profile.isBLow ? 'Disminuido' : 'Normal';
+        const icon = profile.isBLow ? 'fa-arrow-down' : 'fa-check';
+        tags.push(`<span class="patient-tag-chip tag-removeable" onclick="${onRemoveFnName}('bcell');" title="Clic para remover B-CD19+"><i class="fa-solid ${icon}"></i> Linfocitos B: ${profile.bcell}/mm³ (${st}) <span class="patient-tag-remove-btn">×</span></span>`);
+    }
+
+    if (profile.neutrophils !== undefined && !isNaN(profile.neutrophils)) {
+        const st = profile.isNeutLow ? 'Neutropenia' : 'Normal';
+        const icon = profile.isNeutLow ? 'fa-arrow-down' : 'fa-check';
+        tags.push(`<span class="patient-tag-chip tag-removeable" onclick="${onRemoveFnName}('neutrophils');" title="Clic para remover Neutrófilos"><i class="fa-solid ${icon}"></i> Neutrófilos: ${profile.neutrophils}/mm³ (${st}) <span class="patient-tag-remove-btn">×</span></span>`);
+    }
+
+    if (profile.categories && profile.categories.length > 0) {
+        profile.categories.forEach(cat => {
+            tags.push(`<span class="patient-tag-chip tag-removeable" onclick="${onRemoveFnName}('cat_${escapeHtml(cat)}');" title="Clic para desmarcar categoría"><i class="fa-solid fa-layer-group"></i> ${escapeHtml(cat)} <span class="patient-tag-remove-btn">×</span></span>`);
+        });
+    }
+
+    return tags.join('');
+}
+
+function removePatientTag(key) {
+    const profile = getPatientProfile();
+    if (!profile) return;
+
+    if (key.startsWith('cat_')) {
+        const catName = key.replace('cat_', '');
+        profile.categories = (profile.categories || []).filter(c => c !== catName);
+        selectedCategories.delete(catName);
+    } else if (key === 'igg') {
+        profile.igg = undefined;
+    } else if (key === 'iga') {
+        profile.iga = undefined;
+    } else if (key === 'tcell') {
+        profile.tcell = undefined;
+        profile.isTLow = false;
+    } else if (key === 'bcell') {
+        profile.bcell = undefined;
+        profile.isBLow = false;
+    } else if (key === 'neutrophils') {
+        profile.neutrophils = undefined;
+        profile.isNeutLow = false;
+    }
+
+    savePatientProfile(profile);
+    renderBrowser();
+    renderSelectionPanel();
+    renderPatientEntityCard();
+    renderComparisonResults();
+}
+
+window.removePatientTag = removePatientTag;
+
 function initLanguage() {
     const langBtn = document.getElementById('lang-toggle');
     if (langBtn) {
@@ -187,7 +342,7 @@ function initLanguage() {
 
 function applyLanguage() {
     const t = I18N_CATEGORIAS[currentLang] || I18N_CATEGORIAS.es;
-    
+
     const langText = document.getElementById('lang-toggle-text');
     if (langText) langText.textContent = t.langToggle;
 
@@ -265,22 +420,22 @@ function applyLanguage() {
     // About modal
     const aboutTitle = document.getElementById('about-modal-title');
     if (aboutTitle) aboutTitle.textContent = t.aboutTitle;
-    
+
     const aboutWhoTitle = document.getElementById('about-who-title');
     if (aboutWhoTitle) aboutWhoTitle.textContent = t.aboutWhoTitle;
-    
+
     const aboutWhoDesc = document.getElementById('about-who-desc');
     if (aboutWhoDesc) aboutWhoDesc.innerHTML = t.aboutWhoDesc;
-    
+
     const aboutContactTitle = document.getElementById('about-contact-title');
     if (aboutContactTitle) aboutContactTitle.textContent = t.aboutContactTitle;
-    
+
     const aboutContactDesc = document.getElementById('about-contact-desc');
     if (aboutContactDesc) aboutContactDesc.textContent = t.aboutContactDesc;
-    
+
     const aboutFeedbackBtn = document.getElementById('about-feedback-btn');
     if (aboutFeedbackBtn) aboutFeedbackBtn.textContent = t.aboutFeedbackBtn;
-    
+
     const aboutCoffeeBtn = document.getElementById('about-coffee-btn');
     if (aboutCoffeeBtn) aboutCoffeeBtn.textContent = t.aboutCoffeeBtn;
 }
@@ -289,35 +444,233 @@ function initAboutModal() {
     const aboutBtn = document.getElementById('about-toggle');
     const aboutModal = document.getElementById('about-modal');
     const closeBtn = document.getElementById('about-modal-close');
-    
+
     if (!aboutModal) return;
-    
+
+    const resetCafecitoBtn = () => {
+        const cafecitoAliasBtn = document.getElementById('cafecito-alias-btn');
+        if (cafecitoAliasBtn) {
+            cafecitoAliasBtn.innerHTML = `
+                <i class="fa-solid fa-mug-hot" id="cafecito-icon"></i>
+                <span id="cafecito-btn-text">Invitarme un cafecito ☕</span>
+            `;
+            cafecitoAliasBtn.style.borderColor = '';
+            cafecitoAliasBtn.style.backgroundColor = '';
+        }
+    };
+
     const openModal = () => {
+        resetCafecitoBtn();
         aboutModal.classList.add('open');
     };
-    
+
     const closeModal = () => {
         aboutModal.classList.remove('open');
+        resetCafecitoBtn();
     };
-    
+
     if (aboutBtn) aboutBtn.addEventListener('click', openModal);
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
-    
+
     aboutModal.addEventListener('click', (e) => {
         if (e.target === aboutModal) closeModal();
     });
-    
+
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && aboutModal.classList.contains('open')) {
             closeModal();
         }
     });
 
+    const cafecitoAliasBtn = document.getElementById('cafecito-alias-btn');
+    if (cafecitoAliasBtn) {
+        cafecitoAliasBtn.addEventListener('click', () => {
+            const aliasText = 'loren.erra.mp';
+            navigator.clipboard.writeText(aliasText).then(() => {
+                cafecitoAliasBtn.style.backgroundColor = '#10b981';
+                cafecitoAliasBtn.style.color = '#ffffff';
+                cafecitoAliasBtn.innerHTML = `<i class="fa-solid fa-check" style="color:#ffffff;"></i> <span>Alias MP: <strong>loren.egc.mp</strong> (¡Copiado! ✓)</span>`;
+            }).catch(err => {
+                console.error("Error al copiar alias:", err);
+            });
+        });
+    }
+
     // Auto-open on load
     setTimeout(openModal, 600);
 
     // Auto-open every 5 minutes
     setInterval(openModal, 5 * 60 * 1000);
+}
+
+let radarChartInstance = null;
+
+const RADAR_AXIS_KEYS = [
+    { key: 'LT', label: 'Compromiso T (LT)' },
+    { key: 'LB_Compromiso', label: 'Compromiso B (LB)' },
+    { key: 'LB_Antibody', label: 'Defecto Anticuerpos' },
+    { key: 'NK', label: 'Compromiso NK' },
+    { key: 'Infecciones', label: 'Infecciones' },
+    { key: 'Infecciones virales severas', label: 'Inf. Virales Severas' },
+    { key: 'Afecciones celulares', label: 'Afección Celular' },
+    { key: 'Autoinmunidad', label: 'Autoinmunidad' },
+    { key: 'Autoinflamatorias', label: 'Autoinflamatorias' },
+    { key: 'Broncopulmonares', label: 'Broncopulmonares' },
+    { key: 'Diarrea/Gastrointestinal', label: 'Gastrointestinal' },
+    { key: 'Neurológicas', label: 'Neurológicas' },
+    { key: 'Neoplasias', label: 'Neoplasias' },
+    { key: 'Dermatológicas', label: 'Dermatológicas' },
+    { key: 'Sindrómico/Defectos Innatos/Desarrollo', label: 'Sindrómico' }
+];
+
+const RADAR_COLORS = [
+    { border: 'rgba(99, 102, 241, 1)', fill: 'rgba(99, 102, 241, 0.25)' },
+    { border: 'rgba(236, 72, 153, 1)', fill: 'rgba(236, 72, 153, 0.25)' },
+    { border: 'rgba(16, 185, 129, 1)', fill: 'rgba(16, 185, 129, 0.25)' },
+    { border: 'rgba(245, 158, 11, 1)', fill: 'rgba(245, 158, 11, 0.25)' },
+    { border: 'rgba(168, 85, 247, 1)', fill: 'rgba(168, 85, 247, 0.25)' },
+    { border: 'rgba(14, 165, 233, 1)', fill: 'rgba(14, 165, 233, 0.25)' }
+];
+
+function renderComparisonRadarChart(rowsToCompare, patientProfile) {
+    const canvas = document.getElementById('comparisonRadarCanvas');
+    const radarCard = document.getElementById('radar-chart-card');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    if ((!rowsToCompare || rowsToCompare.length === 0) && !patientProfile) {
+        if (radarCard) radarCard.style.display = 'none';
+        return;
+    }
+
+    if (radarCard) radarCard.style.display = 'block';
+
+    const labels = RADAR_AXIS_KEYS.map(a => a.label);
+    const displayRows = (rowsToCompare || []).slice(0, 6);
+
+    const datasets = [];
+
+    // Add Patient Profile Dataset if present
+    if (patientProfile) {
+        const patientCats = (patientProfile.categories || []).map(c => c.toLowerCase().trim());
+
+        const patientDataValues = RADAR_AXIS_KEYS.map(axis => {
+            const key = axis.key;
+            const keyLower = key.toLowerCase();
+            const labelLower = axis.label.toLowerCase();
+
+            // 1. Check lab findings
+            if (key === 'LT' && patientProfile.isTLow) return 100;
+            if ((key === 'LB_Compromiso' || key === 'LB_Antibody') && (patientProfile.isBLow || patientProfile.isIgLow)) return 100;
+            if (key === 'Infecciones' && patientProfile.isNeutLow) return 100;
+
+            // 2. Check selected categories
+            for (let cat of patientCats) {
+                if (cat === keyLower || cat === labelLower || cat.includes(keyLower) || keyLower.includes(cat) || cat.includes(labelLower)) {
+                    return 100;
+                }
+            }
+
+            return 0;
+        });
+
+        datasets.push({
+            label: `📌 PACIENTE (${patientProfile.age || 'Lab'})`,
+            data: patientDataValues,
+            borderColor: '#f59e0b',
+            backgroundColor: 'rgba(245, 158, 11, 0.25)',
+            borderWidth: 3,
+            borderDash: [6, 4],
+            pointBackgroundColor: '#fbbf24',
+            pointBorderColor: '#ffffff',
+            pointRadius: 5,
+            pointHoverRadius: 8,
+            tension: 0.1
+        });
+    }
+
+    displayRows.forEach((row, idx) => {
+        const color = RADAR_COLORS[idx % RADAR_COLORS.length];
+        const dataValues = RADAR_AXIS_KEYS.map(axis => {
+            const raw = row[axis.key] || '0';
+            const num = parseFloat(raw.replace(',', '.')) || 0;
+            return num;
+        });
+
+        datasets.push({
+            label: row.Nombre || `Subtabla ${idx + 1}`,
+            data: dataValues,
+            borderColor: color.border,
+            backgroundColor: color.fill,
+            borderWidth: 2.5,
+            pointBackgroundColor: color.border,
+            pointBorderColor: '#ffffff',
+            pointHoverRadius: 6,
+            tension: 0.15
+        });
+    });
+
+    if (radarChartInstance) {
+        radarChartInstance.destroy();
+    }
+
+    const ctx = canvas.getContext('2d');
+    radarChartInstance = new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 600,
+                easing: 'easeOutQuart'
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#94a3b8',
+                        font: { family: 'Plus Jakarta Sans', size: 12, weight: '600' },
+                        padding: 14,
+                        usePointStyle: true
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                    titleColor: '#f8fafc',
+                    bodyColor: '#cbd5e1',
+                    borderColor: 'rgba(255, 255, 255, 0.15)',
+                    borderWidth: 1,
+                    padding: 10,
+                    callbacks: {
+                        label: function (context) {
+                            return `${context.dataset.label}: ${context.raw}%`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                r: {
+                    angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                    grid: { color: 'rgba(255, 255, 255, 0.08)' },
+                    pointLabels: {
+                        color: '#cbd5e1',
+                        font: { family: 'Outfit', size: 11, weight: '600' }
+                    },
+                    ticks: {
+                        color: '#64748b',
+                        backdropColor: 'transparent',
+                        stepSize: 25,
+                        font: { size: 9 }
+                    },
+                    suggestedMin: 0,
+                    suggestedMax: 100
+                }
+            }
+        }
+    });
 }
 
 function initNavigation() {
@@ -402,12 +755,22 @@ function filterInExplorer() {
 }
 
 function initBrowser() {
+    const profile = getPatientProfile();
     const storedSelection = readStoredSelection();
-    selectedCategories = new Set(storedSelection.filter((value) => CATEGORY_LOOKUP.has(value)));
+    let initialSet = new Set(storedSelection.filter((value) => CATEGORY_LOOKUP.has(value)));
+
+    if (profile && profile.categories && profile.categories.length > 0) {
+        profile.categories.forEach(c => {
+            if (CATEGORY_LOOKUP.has(c)) initialSet.add(c);
+        });
+    }
+
+    selectedCategories = initialSet;
 
     document.getElementById('category-total').textContent = CATEGORY_DEFINITIONS.length;
     renderBrowser();
     renderSelectionPanel();
+    renderPatientEntityCard();
     lucide.createIcons();
 }
 
@@ -424,6 +787,9 @@ function readStoredSelection() {
 
 function persistSelection() {
     localStorage.setItem(CATEGORY_SELECTION_KEY, JSON.stringify(Array.from(selectedCategories)));
+    const profile = getPatientProfile() || {};
+    profile.categories = Array.from(selectedCategories);
+    savePatientProfile(profile);
 }
 
 function renderBrowser(query = '') {
@@ -471,10 +837,11 @@ function renderBrowser(query = '') {
             } else {
                 selectedCategories.add(category.label);
             }
-
             persistSelection();
-            renderBrowser(document.getElementById('category-search').value.trim().toLowerCase());
+            renderBrowser(query);
             renderSelectionPanel();
+            renderPatientEntityCard();
+            renderComparisonResults();
         });
 
         grid.appendChild(card);
@@ -547,13 +914,59 @@ function formatCellBadge(val) {
     return `<span class="matrix-badge positive mid">${escapeHtml(val)}</span>`;
 }
 
+let showOnlyTopMatch = true;
+
+function calculateSubtableScore(row, patientProfile, availableColumns) {
+    const getNum = (key) => parseFloat((row[key] || '0').replace(',', '.')) || 0;
+
+    // 1. If categories are selected, rank strictly by positivity across selected columns
+    if (availableColumns && availableColumns.length > 0) {
+        let colSum = 0;
+        availableColumns.forEach(col => {
+            colSum += getNum(col);
+        });
+        return colSum / availableColumns.length;
+    }
+
+    // 2. Fallback to patient lab profile match if present
+    if (patientProfile) {
+        let pMatch = 0;
+        let pChecks = 0;
+        if (patientProfile.isTLow) {
+            pChecks++;
+            if (getNum('LT') >= 40) pMatch += 100;
+        }
+        if (patientProfile.isBLow) {
+            pChecks++;
+            if (getNum('LB_Compromiso') >= 40 || getNum('LB_Antibody') >= 40) pMatch += 100;
+        }
+        if (patientProfile.isIgLow) {
+            pChecks++;
+            if (getNum('LB_Antibody') >= 40) pMatch += 100;
+        }
+        if (patientProfile.isNeutLow) {
+            pChecks++;
+            if (getNum('Infecciones') >= 40) pMatch += 100;
+        }
+        if (pChecks > 0) return pMatch / pChecks;
+    }
+
+    let sum = 0;
+    let count = 0;
+    for (let k in row) {
+        if (k !== 'Nombre') {
+            sum += getNum(k);
+            count++;
+        }
+    }
+    return count > 0 ? sum / count : 0;
+}
+
 function renderComparisonResults() {
     const t = I18N_CATEGORIAS[currentLang] || I18N_CATEGORIAS.es;
     const resultsPanel = document.getElementById('comparison-results');
     const table = document.getElementById('comparison-table');
     const summary = document.getElementById('comparison-summary');
-    const matrixSearchInput = document.getElementById('matrix-search-input');
-    const matrixQuery = matrixSearchInput ? matrixSearchInput.value.trim().toLowerCase() : '';
     const selected = Array.from(selectedCategories);
 
     if (selected.length === 0) {
@@ -590,13 +1003,58 @@ function renderComparisonResults() {
         return;
     }
 
-    let filteredRows = CSV_ROWS;
-    if (matrixQuery) {
-        filteredRows = CSV_ROWS.filter(row => {
-            const name = (row.Nombre || '').toLowerCase();
-            if (name.includes(matrixQuery)) return true;
-            return availableColumns.some(col => (row[col] || '').toLowerCase().includes(matrixQuery));
-        });
+    // Patient profile matching & rendering
+    renderPatientEntityCard();
+    const patientProfile = getPatientProfile();
+
+    // Rank subtables dynamically based on selected columns & patient profile
+    const scoredRows = CSV_ROWS.map(row => ({
+        row: row,
+        score: calculateSubtableScore(row, patientProfile, availableColumns)
+    }));
+    scoredRows.sort((a, b) => b.score - a.score);
+
+    // Setup similarity toggle button
+    const toggleBtn = document.getElementById('toggle-similarity-mode-btn');
+    if (toggleBtn) {
+        toggleBtn.style.display = 'inline-flex';
+        const toggleText = document.getElementById('similarity-mode-text');
+        if (toggleText) {
+            toggleText.textContent = showOnlyTopMatch
+                ? `Ver todas las subtables (${scoredRows.length})`
+                : `Ver sólo la más similar (Top 1)`;
+        }
+        if (!toggleBtn.dataset.bound) {
+            toggleBtn.dataset.bound = "true";
+            toggleBtn.addEventListener('click', () => {
+                showOnlyTopMatch = !showOnlyTopMatch;
+                renderComparisonResults();
+            });
+        }
+    }
+
+    const finalRows = showOnlyTopMatch && scoredRows.length > 0 ? [scoredRows[0].row] : scoredRows.map(s => s.row);
+
+    // Render patient row at top of table if available
+    let patientRowHtml = '';
+    if (patientProfile) {
+        patientRowHtml = `
+            <tr style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(239, 68, 68, 0.15)); border: 1px solid rgba(245, 158, 11, 0.4);">
+                <td style="font-weight: 700; color: #fbbf24;">
+                    📌 PACIENTE INGRESADO (${patientProfile.age || 'Lab'})
+                </td>
+                ${availableColumns.map(col => {
+            let val = 'Sin datos';
+            const cLower = col.toLowerCase();
+            if (cLower.includes('t') && patientProfile.isTLow) val = 'Disminuido';
+            else if (cLower.includes('b') && patientProfile.isBLow) val = 'Disminuido';
+            else if (cLower.includes('anti') && patientProfile.isIgLow) val = 'Disminuido';
+            else if (cLower.includes('neut') && patientProfile.isNeutLow) val = 'Disminuido';
+            else if (patientProfile.isIgLow) val = 'Alterado';
+            return `<td><span class="matrix-badge positive high">${val}</span></td>`;
+        }).join('')}
+            </tr>
+        `;
     }
 
     const headerCells = [t.tableNameCol, ...availableColumns];
@@ -605,7 +1063,8 @@ function renderComparisonResults() {
             <tr>${headerCells.map((header) => `<th>${escapeHtml(header)}</th>`).join('')}</tr>
         </thead>
         <tbody>
-            ${filteredRows.map((row) => `
+            ${patientRowHtml}
+            ${finalRows.map((row) => `
                 <tr>
                     <td style="cursor:pointer;" title="Filtrar esta subtabla en el explorador" onclick="navigateToExplorerWithSubtable('${escapeHtml(row.Nombre || '').replace(/'/g, "\\'")}');">
                         <span class="badge-subcategory-click">${escapeHtml(row.Nombre || '')}</span>
@@ -620,11 +1079,15 @@ function renderComparisonResults() {
         </tbody>
     `;
 
+    // Render interactive radar chart overlay with dynamic axes matching availableColumns
+    renderComparisonRadarChart(finalRows, patientProfile, availableColumns);
+
     const details = [];
+    if (patientProfile) details.push(`📌 Paciente: ${patientProfile.age}`);
+    if (showOnlyTopMatch && scoredRows.length > 0) details.push(`🎯 Subtabla más similar: ${scoredRows[0].row.Nombre}`);
     if (selected.length > 0) details.push(t.detailsSelected(selected.length));
     if (availableColumns.length > 0) details.push(t.detailsCompared(availableColumns.length));
     if (missingLabels.length > 0) details.push(t.detailsMissing(missingLabels.length));
-    if (matrixQuery) details.push(`Filtrado: ${filteredRows.length} de ${CSV_ROWS.length}`);
     summary.textContent = details.join(' · ');
 }
 
@@ -640,7 +1103,7 @@ function exportComparisonCsv() {
 
     const mappedColumns = selected.flatMap((label) => (CATEGORY_LOOKUP.get(label)?.csvKeys || []));
     const availableColumns = Array.from(new Set(mappedColumns)).filter((col) => CSV_ROWS.length > 0 && Object.prototype.hasOwnProperty.call(CSV_ROWS[0], col));
-    
+
     if (availableColumns.length === 0) return;
 
     const headers = ['Nombre', ...availableColumns];

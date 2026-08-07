@@ -35,7 +35,9 @@
         <!-- Header -->
         <header class="app-header">
             <div class="header-logo-section">
-                <img src="Logo.png" alt="IEI Logo" class="app-logo-img">
+                <a href="index.html" class="header-logo-link" title="Volver al inicio / Explorador de Genes">
+                    <img src="Logo.png" alt="IEI Logo" class="app-logo-img">
+                </a>
                 <div class="header-text">
                     <h1>IEI Gene Explorer</h1>
                     <p class="subtitle" id="hdr-subtitle">Base de Datos de Inmunodeficiencias y Errores Innatos de la
@@ -85,7 +87,8 @@
                 </div>
             </div>
 
-            <div class="stat-card action-stat-card" id="ig-calc-toggle-btn" title="Ingresar valores de laboratorio por edad">
+            <div class="stat-card action-stat-card" id="ig-calc-toggle-btn"
+                title="Ingresar valores de laboratorio por edad">
                 <div class="stat-icon-wrapper amber">
                     <i data-lucide="calculator"></i>
                 </div>
@@ -98,7 +101,8 @@
                 </div>
             </div>
 
-            <div class="stat-card action-stat-card" id="load-default-btn" title="Abrir comparador de categorías desglosadas">
+            <div class="stat-card action-stat-card" id="load-default-btn"
+                title="Abrir comparador de categorías desglosadas">
                 <div class="stat-icon-wrapper indigo">
                     <i data-lucide="layers"></i>
                 </div>
@@ -111,6 +115,29 @@
                 </div>
             </div>
         </section>
+
+        <!-- Patient Entity Card in index.html -->
+        <div class="patient-entity-card" id="patient-entity-card" style="display: none;">
+            <div class="patient-entity-header">
+                <div class="patient-entity-title">
+                    <div class="patient-avatar-badge">
+                        <i class="fa-solid fa-user-doctor"></i>
+                    </div>
+                    <div>
+                        <h4>Entidad Paciente Precargada</h4>
+                        <p id="patient-entity-subtitle">Valores de laboratorio e indicadores incorporados a la ficha activa</p>
+                    </div>
+                </div>
+                <div class="patient-entity-actions">
+                    <button class="btn btn-outline btn-compact" id="clear-patient-btn" type="button" title="Vaciar ficha del paciente y reiniciar valores">
+                        <i class="fa-solid fa-user-slash"></i> Vaciar Paciente
+                    </button>
+                </div>
+            </div>
+            <div class="patient-entity-tags" id="patient-entity-tags">
+                <!-- Dynamic patient entity tags -->
+            </div>
+        </div>
 
         <!-- Main Layout Grid -->
         <main class="main-layout full-width">
@@ -373,11 +400,11 @@
                                 <i class="fa-solid fa-envelope"></i> <span id="about-feedback-btn">Enviar
                                     Feedback</span>
                             </a>
-                            <a href="https://cafecito.app/lorerra" target="_blank" rel="noopener"
-                                id="cafecitoBtnPlaceholder" class="about-btn about-btn--coffee">
-                                <i class="fa-solid fa-mug-hot"></i> <span id="about-coffee-btn">Invitarme un cafecito
-                                    ☕</span>
-                            </a>
+                            <button class="about-btn about-btn--coffee" id="cafecito-alias-btn" type="button"
+                                title="Haz clic para ver y copiar el Alias de Mercado Pago (0% comisión)">
+                                <i class="fa-solid fa-mug-hot" id="cafecito-icon"></i>
+                                <span id="cafecito-btn-text">Invitarme un cafecito ☕</span>
+                            </button>
                         </div>
                     </div>
                 </div>
