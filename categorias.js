@@ -545,7 +545,7 @@ function renderComparisonRadarChart(rowsToCompare, patientProfile) {
     if (radarCard) radarCard.style.display = 'block';
 
     const labels = RADAR_AXIS_KEYS.map(a => a.label);
-    const displayRows = (rowsToCompare || []).slice(0, 6);
+    const displayRows = rowsToCompare || [];
 
     const datasets = [];
 
@@ -589,7 +589,17 @@ function renderComparisonRadarChart(rowsToCompare, patientProfile) {
     }
 
     displayRows.forEach((row, idx) => {
-        const color = RADAR_COLORS[idx % RADAR_COLORS.length];
+        let color;
+        if (displayRows.length <= RADAR_COLORS.length) {
+            color = RADAR_COLORS[idx];
+        } else {
+            const hue = Math.round((idx * 360) / displayRows.length);
+            color = {
+                border: `hsl(${hue}, 85%, 60%)`,
+                fill: `hsla(${hue}, 85%, 60%, 0.15)`
+            };
+        }
+
         const dataValues = RADAR_AXIS_KEYS.map(axis => {
             const raw = row[axis.key] || '0';
             const num = parseFloat(raw.replace(',', '.')) || 0;
