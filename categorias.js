@@ -485,7 +485,7 @@ function initAboutModal() {
     const cafecitoAliasBtn = document.getElementById('cafecito-alias-btn');
     if (cafecitoAliasBtn) {
         cafecitoAliasBtn.addEventListener('click', () => {
-            const aliasText = 'loren.erra.mp';
+            const aliasText = 'lorenzo.erra.mp';
             navigator.clipboard.writeText(aliasText).then(() => {
                 cafecitoAliasBtn.style.backgroundColor = '#10b981';
                 cafecitoAliasBtn.style.color = '#ffffff';
