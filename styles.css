@@ -2569,3 +2569,346 @@ body.light-theme .moon-icon { display: none; }
     font-size: 0.75rem;
 }
 
+
+/* --- Interactive Parameter Selector (Chips / Cajitas Scrollable) --- */
+.ig-param-selector-section {
+    background-color: var(--bg-surface-hover);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.ig-selector-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.ig-selector-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ig-category-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.ig-category-pill-btn {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.ig-category-pill-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+}
+
+.ig-chips-scroll-container {
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.ig-chips-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ig-chips-group-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ig-chips-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.param-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: var(--bg-surface);
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+.param-chip:hover {
+    border-color: var(--primary-light);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+.param-chip.active {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: var(--primary);
+    color: var(--primary);
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.15);
+}
+
+.param-chip input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+/* --- Dynamic Active Input Cards Grid --- */
+.ig-active-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.ig-input-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: var(--shadow-sm);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.ig-input-card:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.ig-input-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+}
+
+.ig-input-card-title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.ig-input-card-unit {
+    font-size: 0.72rem;
+    color: var(--primary);
+    background: var(--primary-light);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+}
+
+.ig-input-card-row {
+    width: 100%;
+    margin-top: 2px;
+}
+
+.ig-input-card-row input {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   MOBILE FIRST & RESPONSIVE ADAPTATIONS (Desktop & Mobile Unified)
+   ========================================================================== */
+
+/* Touch & tap responsiveness */
+html, body {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Category pills in modal ribbon */
+.ig-category-pills {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+}
+.ig-category-pills::-webkit-scrollbar {
+    display: none;
+}
+
+.ig-category-pill-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Table Responsive Wrapper */
+.ig-table-responsive-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--radius-md);
+    margin-top: 14px;
+    border: 1px solid var(--border-color);
+}
+
+.ig-calc-results-table {
+    margin-top: 0;
+    min-width: 480px;
+}
+
+/* Responsive Modal (Bottom Sheet on Mobile, Centered Card on Desktop) */
+@media (max-width: 768px) {
+    .modal-overlay {
+        padding: 0;
+        align-items: flex-end; /* Bottom sheet effect */
+    }
+
+    .modal-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 88vh;
+        border-radius: 20px 20px 0 0 !important;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        animation: slideUpBottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideUpBottom {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+    }
+
+    .modal-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: var(--bg-surface);
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-header::before {
+        content: '';
+        position: absolute;
+        top: 6px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 36px;
+        height: 4px;
+        background-color: var(--border-color);
+        border-radius: 4px;
+    }
+
+    .modal-body {
+        padding: 14px 16px !important;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        flex: 1;
+    }
+
+    .ig-active-cards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 10px;
+    }
+
+    .ig-input-card {
+        padding: 8px 10px;
+    }
+
+    .ig-input-card-title {
+        font-size: 0.78rem;
+    }
+
+    .ig-input-card-unit {
+        font-size: 0.68rem;
+        padding: 1px 6px;
+    }
+
+    .ig-input-card-row input,
+    .ig-calc-box input,
+    .ig-calc-box select {
+        font-size: 16px !important; /* Prevents iOS auto zoom */
+        padding: 8px 10px;
+    }
+
+    .param-chip {
+        padding: 7px 10px;
+        font-size: 0.78rem;
+    }
+
+    /* Modal footer sticky at bottom of sheet */
+    .modal-body > div:last-child {
+        position: sticky;
+        bottom: -14px;
+        background: var(--bg-surface);
+        padding: 12px 0 6px 0;
+        border-top: 1px solid var(--border-color);
+        margin-top: 16px !important;
+        z-index: 5;
+    }
+
+    .modal-body > div:last-child button {
+        flex: 1;
+        justify-content: center;
+        padding: 10px 14px;
+    }
+}
+
+/* Extra small mobile adjustments */
+@media (max-width: 480px) {
+    .ig-active-cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .param-chip {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .ig-selector-title {
+        font-size: 0.82rem;
+    }
+}

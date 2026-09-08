@@ -3,7 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Interactive IEI</title>
     <meta name="description"
         content="Una aplicación web moderna e interactiva para explorar, filtrar y descargar la base de datos de Errores Innatos de la Inmunidad (IUIS).">
@@ -326,6 +330,7 @@
                             </tbody>
                         </table>
                     </div>
+                    </div>
 
                     <!-- Table Loading State -->
                     <div class="table-loading" id="table-loading-overlay" style="display: none;">
@@ -410,67 +415,68 @@
         </div>
 
         <!-- Ig & Lab Reference Calculator Modal -->
+                <!-- Ig & Lab Reference Calculator Modal -->
         <div class="modal-overlay" id="ig-calc-modal">
-            <div class="modal-content" style="max-width: 780px;">
+            <div class="modal-content" style="max-width: 840px;">
                 <div class="modal-header">
-                    <h3><i class="fa-solid fa-calculator"></i> <span id="ig-modal-title">Valores de Referencia de
-                            Laboratorio Inmunológico por Edad</span></h3>
+                    <h3><i class="fa-solid fa-calculator"></i> <span id="ig-modal-title">Valores de Referencia Inmunológicos por Edad</span></h3>
                     <button class="close-btn" id="ig-calc-modal-close" title="Cerrar">
                         <i data-lucide="x"></i>
                     </button>
                 </div>
                 <div class="modal-body" style="padding: 20px;">
-                    <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 16px;"
-                        id="ig-modal-desc">
-                        Selecciona la edad del paciente e ingresa los valores de su laboratorio para evaluar
-                        Inmunoglobulinas, Células T, Células B y Neutrófilos.
+                    <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 16px;" id="ig-modal-desc">
+                        Selecciona el grupo etario e ingresa los parámetros de laboratorio disponibles para evaluar el perfil inmunológico del paciente.
                     </p>
 
-                    <div class="ig-calc-grid">
-                        <div class="ig-calc-box">
-                            <label for="ig-calc-age" id="lbl-ig-age">Edad del Paciente:</label>
-                            <select id="ig-calc-age">
-                                <option value="0-3m">0 – 3 meses</option>
-                                <option value="4-6m">4 – 6 meses</option>
-                                <option value="7-12m">7 – 12 meses</option>
-                                <option value="1-3y">1 – 3 años</option>
-                                <option value="4-6y">4 – 6 años</option>
-                                <option value="7-11y">7 – 11 años</option>
-                                <option value="12-16y">12 – 16 años</option>
-                                <option value="adult" selected>Adulto (> 16 años)</option>
-                            </select>
+                    <!-- Age Selector Box -->
+                    <div class="ig-calc-box" style="margin-bottom: 16px;">
+                        <label for="ig-calc-age" id="lbl-ig-age" style="font-weight: 700; color: var(--text-primary);">Grupo Etario del Paciente:</label>
+                        <select id="ig-calc-age" style="font-weight: 600;">
+                            <option value="cord">Cordón / Neonato (0-1 m)</option>
+                            <option value="2-6m">2 - 6 meses</option>
+                            <option value="6-12m">6 - 12 meses</option>
+                            <option value="12-24m">12 - 24 meses (1 - 2 años)</option>
+                            <option value="24-36m">24 - 36 meses (2 - 3 años)</option>
+                            <option value="36-80m">36 - 80 meses (3 - 6.6 años)</option>
+                            <option value="80-210m">80 - 210 meses (6.6 - 17.5 años)</option>
+                            <option value="adult" selected>Adulto (> 18 años)</option>
+                        </select>
+                    </div>
+
+                    <!-- Parameter Selector (Cajitas Scrollable) -->
+                    <div class="ig-param-selector-section">
+                        <div class="ig-selector-header">
+                            <div class="ig-selector-title">
+                                <i class="fa-solid fa-square-check" style="color: var(--primary);"></i>
+                                <span>Parámetros a Consultar (<span id="ig-selected-count">0</span>)</span>
+                            </div>
+                            <div class="ig-category-pills">
+                                <button type="button" class="ig-category-pill-btn" id="btn-select-all">Todos</button>
+                                <button type="button" class="ig-category-pill-btn" id="btn-select-ig">Inmunoglobulinas</button>
+                                <button type="button" class="ig-category-pill-btn" id="btn-select-subpop">Subpoblaciones</button>
+                                <button type="button" class="ig-category-pill-btn" id="btn-select-leuko">Serie Leucocitaria</button>
+                                <button type="button" class="ig-category-pill-btn" id="btn-select-none">Desmarcar</button>
+                            </div>
                         </div>
-                        <div class="ig-calc-box">
-                            <label for="ig-calc-igg">IgG Paciente (mg/dL):</label>
-                            <input type="number" id="ig-calc-igg" placeholder="Ej. 450">
-                        </div>
-                        <div class="ig-calc-box">
-                            <label for="ig-calc-iga">IgA Paciente (mg/dL):</label>
-                            <input type="number" id="ig-calc-iga" placeholder="Ej. 30">
-                        </div>
-                        <div class="ig-calc-box">
-                            <label for="ig-calc-igm">IgM Paciente (mg/dL):</label>
-                            <input type="number" id="ig-calc-igm" placeholder="Ej. 80">
-                        </div>
-                        <div class="ig-calc-box">
-                            <label for="ig-calc-tcell">Células T CD3+ (/mm³):</label>
-                            <input type="number" id="ig-calc-tcell" placeholder="Ej. 1200">
-                        </div>
-                        <div class="ig-calc-box">
-                            <label for="ig-calc-bcell">Células B CD19+ (/mm³):</label>
-                            <input type="number" id="ig-calc-bcell" placeholder="Ej. 150">
-                        </div>
-                        <div class="ig-calc-box">
-                            <label for="ig-calc-neutrophils">Neutrófilos (/mm³):</label>
-                            <input type="number" id="ig-calc-neutrophils" placeholder="Ej. 1800">
+
+                        <div class="ig-chips-scroll-container" id="ig-chips-container">
+                            <!-- Populated dynamically via JS -->
                         </div>
                     </div>
 
+                    <!-- Active Inputs Container -->
+                    <div class="ig-active-cards-grid" id="ig-active-inputs-container">
+                        <!-- Populated dynamically via JS based on selected chips -->
+                    </div>
+
+                    <!-- Results Evaluation Table -->
+                    <div class="ig-table-responsive-wrapper">
                     <table class="ig-calc-results-table">
                         <thead>
                             <tr>
                                 <th>Parámetro</th>
-                                <th>Rango Normal por Edad</th>
+                                <th>Rango de Referencia</th>
                                 <th>Valor Ingresado</th>
                                 <th>Estado</th>
                             </tr>
@@ -479,6 +485,7 @@
                             <!-- Populated dynamically -->
                         </tbody>
                     </table>
+                    </div>
 
                     <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 12px;">
                         <button class="btn btn-outline" id="ig-calc-reset-btn" type="button">Limpiar</button>
@@ -490,6 +497,7 @@
                 </div>
             </div>
         </div>
+        <!-- END Modal -->iv>
 
         <!-- Detail Drawer / Slide out panel -->
         <div class="detail-drawer-overlay" id="detail-drawer-overlay"></div>

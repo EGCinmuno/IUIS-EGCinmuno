@@ -234,65 +234,84 @@ function renderPatientEntityCard() {
     }
 }
 
+const PARAM_DEFINITIONS_CAT = [
+    { id: 'igg', name: 'IgG', unit: 'mg/dL' },
+    { id: 'iga', name: 'IgA', unit: 'mg/dL' },
+    { id: 'igm', name: 'IgM', unit: 'mg/dL' },
+    { id: 'leukocytes', name: 'Leucocitos (Absoluto)', unit: '/µL' },
+    { id: 'neutrophils', name: 'Neutrófilos (Absoluto)', unit: '/µL' },
+    { id: 'neutrophils_pct', name: 'Neutrófilos (%)', unit: '%' },
+    { id: 'lymphocytes', name: 'Linfocitos (Absoluto)', unit: '/µL' },
+    { id: 'lymphocytes_pct', name: 'Linfocitos (%)', unit: '%' },
+    { id: 'monocytes', name: 'Monocitos (Absoluto)', unit: '/µL' },
+    { id: 'monocytes_pct', name: 'Monocitos (%)', unit: '%' },
+    { id: 'eosinophils', name: 'Eosinófilos (Absoluto)', unit: '/µL' },
+    { id: 'eosinophils_pct', name: 'Eosinófilos (%)', unit: '%' },
+    { id: 'basophils', name: 'Basófilos (Absoluto)', unit: '/µL' },
+    { id: 'basophils_pct', name: 'Basófilos (%)', unit: '%' },
+    { id: 'tcell', name: 'Linfocitos T CD3+ (Absoluto)', unit: 'cel/mm³' },
+    { id: 'tcell_pct', name: '% Linfocitos T CD3+', unit: '%' },
+    { id: 'tcd4', name: 'Linfocitos T CD4+ (Absoluto)', unit: 'cel/mm³' },
+    { id: 'tcd4_pct', name: '% Linfocitos T CD4+', unit: '%' },
+    { id: 'tcd8', name: 'Linfocitos T CD8+ (Absoluto)', unit: 'cel/mm³' },
+    { id: 'tcd8_pct', name: '% Linfocitos T CD8+', unit: '%' },
+    { id: 'bcell', name: 'Linfocitos B CD19+ (Absoluto)', unit: 'cel/mm³' },
+    { id: 'bcell_pct', name: '% Linfocitos B CD19+', unit: '%' },
+    { id: 'nkcell', name: 'NK CD3-CD56+ (Absoluto)', unit: 'cel/mm³' },
+    { id: 'nkcell_pct', name: '% Células NK CD3-CD56+', unit: '%' },
+    { id: 'tcr_ab', name: 'Linfocitos TCR αβ+ (Absoluto)', unit: 'cel/mm³' },
+    { id: 'tcr_ab_pct', name: '% Linfocitos TCR αβ+', unit: '%' },
+    { id: 'tcr_gd', name: 'Linfocitos TCR γδ+ (Absoluto)', unit: 'cel/mm³' },
+    { id: 'tcr_gd_pct', name: '% Linfocitos TCR γδ+', unit: '%' }
+];
+
+const IG_REF_CAT = {
+    'cord': { label: 'Cordón / Neonato (0-1 m)', igg: [600, 1600], iga: [0, 15], igm: [5, 30], leukocytes: [9000, 30000], neutrophils: [6000, 26000], neutrophils_pct: [50, 80], eosinophils: [100, 1000], eosinophils_pct: [1, 5], basophils: [0, 300], basophils_pct: [0, 2], lymphocytes: [2000, 11000], lymphocytes_pct: [20, 50], monocytes: [400, 3000], monocytes_pct: [3, 12], tcell: [2052, 4298], tcell_pct: [58.5, 72.5], tcd4: [1572, 3286], tcd4_pct: [40.0, 52.0], tcd8: [848, 1912], tcd8_pct: [24.3, 35.5], bcell: [263, 764], bcell_pct: [8.0, 13.0], nkcell: [321, 1197], nkcell_pct: [8.0, 24.0], tcr_ab: [2096, 4527], tcr_ab_pct: [56.5, 71.5], tcr_gd: [36, 88], tcr_gd_pct: [1.0, 2.0] },
+    '2-6m': { label: '2 - 6 meses', igg: [200, 600], iga: [10, 70], igm: [20, 100], leukocytes: [5000, 19500], neutrophils: [1000, 8500], neutrophils_pct: [15, 45], eosinophils: [100, 1000], eosinophils_pct: [1, 6], basophils: [0, 200], basophils_pct: [0, 2], lymphocytes: [2500, 11500], lymphocytes_pct: [45, 75], monocytes: [200, 1200], monocytes_pct: [3, 10], tcell: [3302, 4050], tcell_pct: [50.0, 64.5], tcd4: [2059, 2932], tcd4_pct: [34.5, 43.0], tcd8: [850, 1394], tcd8_pct: [16.0, 20.5], bcell: [1080, 2144], bcell_pct: [23.0, 32.0], nkcell: [336, 897], nkcell_pct: [7.0, 13.0], tcr_ab: [2721, 4020], tcr_ab_pct: [48.5, 60.0], tcr_gd: [104, 190], tcr_gd_pct: [2.0, 3.5] },
+    '6-12m': { label: '6 - 12 meses', igg: [300, 900], iga: [15, 100], igm: [30, 120], leukocytes: [6000, 17500], neutrophils: [1500, 8500], neutrophils_pct: [20, 50], eosinophils: [100, 800], eosinophils_pct: [1, 5], basophils: [0, 200], basophils_pct: [0, 2], lymphocytes: [4000, 10500], lymphocytes_pct: [50, 75], monocytes: [200, 1200], monocytes_pct: [3, 10], tcell: [3668, 4740], tcell_pct: [59.0, 78.0], tcd4: [1741, 3402], tcd4_pct: [33.0, 45.0], tcd8: [810, 1351], tcd8_pct: [16.0, 29.0], bcell: [900, 1540], bcell_pct: [15.0, 30.0], nkcell: [336, 860], nkcell_pct: [6.0, 14.0], tcr_ab: [3367, 4719], tcr_ab_pct: [50.0, 75.0], tcr_gd: [139, 214], tcr_gd_pct: [2.0, 3.0] },
+    '12-24m': { label: '12 - 24 meses (1 - 2 años)', igg: [400, 1000], iga: [20, 150], igm: [40, 150], leukocytes: [6000, 17000], neutrophils: [1500, 8500], neutrophils_pct: [25, 55], eosinophils: [100, 800], eosinophils_pct: [1, 5], basophils: [0, 200], basophils_pct: [0, 2], lymphocytes: [3000, 9500], lymphocytes_pct: [45, 70], monocytes: [200, 1000], monocytes_pct: [3, 9], tcell: [3430, 4147], tcell_pct: [62.0, 73.5], tcd4: [1716, 2550], tcd4_pct: [32.0, 47.5], tcd8: [882, 1534], tcd8_pct: [18.0, 26.0], bcell: [756, 1260], bcell_pct: [15.0, 24.0], nkcell: [245, 803], nkcell_pct: [5.0, 13.0], tcr_ab: [3138, 4088], tcr_ab_pct: [59.0, 69.0], tcr_gd: [123, 280], tcr_gd_pct: [2.5, 5.5] },
+    '24-36m': { label: '24 - 36 meses (2 - 3 años)', igg: [450, 1050], iga: [25, 160], igm: [40, 160], leukocytes: [5500, 15500], neutrophils: [1500, 8000], neutrophils_pct: [30, 60], eosinophils: [100, 700], eosinophils_pct: [1, 5], basophils: [0, 200], basophils_pct: [0, 2], lymphocytes: [2500, 8500], lymphocytes_pct: [35, 65], monocytes: [200, 900], monocytes_pct: [3, 9], tcell: [2210, 4017], tcell_pct: [62.5, 73.0], tcd4: [1275, 2295], tcd4_pct: [30.0, 40.5], tcd8: [878, 1450], tcd8_pct: [21.0, 24.5], bcell: [648, 1178], bcell_pct: [14.0, 22.0], nkcell: [420, 630], nkcell_pct: [9.0, 12.0], tcr_ab: [2741, 3798], tcr_ab_pct: [60.0, 67.0], tcr_gd: [127, 385], tcr_gd_pct: [3.0, 7.0] },
+    '36-80m': { label: '36 - 80 meses (3 - 6.6 años)', igg: [500, 1200], iga: [30, 200], igm: [45, 180], leukocytes: [5000, 14500], neutrophils: [1500, 8000], neutrophils_pct: [35, 65], eosinophils: [100, 700], eosinophils_pct: [1, 5], basophils: [0, 200], basophils_pct: [0, 2], lymphocytes: [1800, 7000], lymphocytes_pct: [30, 55], monocytes: [200, 800], monocytes_pct: [3, 8], tcell: [2054, 3169], tcell_pct: [67.0, 75.0], tcd4: [1129, 1581], tcd4_pct: [33.0, 43.5], tcd8: [711, 1121], tcd8_pct: [22.5, 29.5], bcell: [411, 658], bcell_pct: [11.0, 18.0], nkcell: [246, 461], nkcell_pct: [6.0, 14.0], tcr_ab: [1943, 2923], tcr_ab_pct: [63.0, 68.0], tcr_gd: [123, 257], tcr_gd_pct: [4.0, 7.0] },
+    '80-210m': { label: '80 - 210 meses (6.6 - 17.5 años)', igg: [600, 1450], iga: [50, 280], igm: [50, 220], leukocytes: [4500, 13000], neutrophils: [1800, 7500], neutrophils_pct: [40, 70], eosinophils: [50, 600], eosinophils_pct: [0, 6], basophils: [0, 200], basophils_pct: [0, 2], lymphocytes: [1500, 5200], lymphocytes_pct: [25, 45], monocytes: [200, 800], monocytes_pct: [2, 8], tcell: [1543, 2484], tcell_pct: [65.0, 72.0], tcd4: [771, 1180], tcd4_pct: [32.0, 38.5], tcd8: [629, 1128], tcd8_pct: [25.0, 32.5], bcell: [278, 481], bcell_pct: [10.0, 16.0], nkcell: [241, 555], nkcell_pct: [10.0, 19.0], tcr_ab: [1407, 2187], tcr_ab_pct: [54.0, 66.0], tcr_gd: [113, 237], tcr_gd_pct: [5.0, 8.0] },
+    'adult': { label: 'Adulto (> 18 años)', igg: [700, 1600], iga: [70, 400], igm: [40, 230], leukocytes: [4000, 11000], neutrophils: [2000, 6900], neutrophils_pct: [37.0, 80.8], eosinophils: [0, 700], eosinophils_pct: [0.0, 7.0], basophils: [0, 200], basophils_pct: [0.0, 2.0], lymphocytes: [600, 3400], lymphocytes_pct: [10.0, 50.0], monocytes: [0, 900], monocytes_pct: [0.0, 12.0], tcell: [690, 2540], tcell_pct: [55.0, 84.0], tcd4: [410, 1590], tcd4_pct: [31.0, 60.0], tcd8: [190, 1140], tcd8_pct: [13.0, 41.0], bcell: [100, 500], bcell_pct: [6.0, 24.0], nkcell: [90, 600], nkcell_pct: [6.0, 35.0], tcr_ab: [500, 2000], tcr_ab_pct: [50.0, 70.0], tcr_gd: [50, 300], tcr_gd_pct: [1.0, 10.0] }
+};
+
 function buildPatientEntityTags(profile, onRemoveFnName) {
     if (!profile) return '';
     const tags = [];
 
-    const AGE_LABELS = {
-        '0-1m': 'Neonato (0-1m)',
-        '2-5m': 'Lactante (2-5m)',
-        '6-12m': 'Lactante (6-12m)',
-        '1-3y': 'Infante (1-3a)',
-        '4-6y': 'Infante (4-6a)',
-        '7-11y': 'Escolar (7-11a)',
-        '12-16y': 'Adolescente (12-16a)',
-        'adult': 'Adulto (≥18a)'
-    };
+    const ageObj = IG_REF_CAT[profile.age] || IG_REF_CAT.adult;
+    const ageLabel = ageObj ? ageObj.label : (profile.age || 'Paciente');
 
-    if (profile.age) {
-        const label = AGE_LABELS[profile.age] || profile.age;
-        tags.push(`<span class="patient-tag-chip"><i class="fa-solid fa-calendar-day"></i> Edad: ${escapeHtml(label)}</span>`);
-    }
+    tags.push(`<span class="patient-tag-chip tag-age" title="Grupo etario"><i class="fa-solid fa-child"></i> ${ageLabel}</span>`);
 
-    if (profile.igg !== undefined && !isNaN(profile.igg)) {
-        const st = profile.isIgLow ? 'Bajo' : 'Normal';
-        const icon = profile.isIgLow ? 'fa-arrow-down' : 'fa-check';
-        tags.push(`<span class="patient-tag-chip tag-removeable" onclick="${onRemoveFnName}('igg');" title="Clic para remover IgG"><i class="fa-solid ${icon}"></i> IgG: ${profile.igg} mg/dL (${st}) <span class="patient-tag-remove-btn">×</span></span>`);
-    }
+    PARAM_DEFINITIONS_CAT.forEach(p => {
+        const val = profile[p.id];
+        if (val !== undefined && val !== null && !isNaN(val)) {
+            const range = ageObj[p.id];
+            let st = 'Normal';
+            let icon = 'fa-check';
+            if (range) {
+                if (val < range[0]) { st = 'Disminuido'; icon = 'fa-arrow-down'; }
+                else if (val > range[1]) { st = 'Elevado'; icon = 'fa-arrow-up'; }
+            }
+            tags.push(`<span class="patient-tag-chip tag-removeable" onclick="${onRemoveFnName}('${p.id}');" title="Clic para remover ${p.name}">
+                <i class="fa-solid ${icon}"></i> ${p.name}: ${val} ${p.unit} (${st}) 
+                <span class="patient-tag-remove-btn">x</span>
+            </span>`);
+        }
+    });
 
-    if (profile.iga !== undefined && !isNaN(profile.iga)) {
-        const st = profile.isIgLow ? 'Bajo' : 'Normal';
-        const icon = profile.isIgLow ? 'fa-arrow-down' : 'fa-check';
-        tags.push(`<span class="patient-tag-chip tag-removeable" onclick="${onRemoveFnName}('iga');" title="Clic para remover IgA"><i class="fa-solid ${icon}"></i> IgA: ${profile.iga} mg/dL (${st}) <span class="patient-tag-remove-btn">×</span></span>`);
-    }
-
-    if (profile.tcell !== undefined && !isNaN(profile.tcell)) {
-        const st = profile.isTLow ? 'Disminuido' : 'Normal';
-        const icon = profile.isTLow ? 'fa-arrow-down' : 'fa-check';
-        tags.push(`<span class="patient-tag-chip tag-removeable" onclick="${onRemoveFnName}('tcell');" title="Clic para remover T-CD3+"><i class="fa-solid ${icon}"></i> Linfocitos T: ${profile.tcell}/mm³ (${st}) <span class="patient-tag-remove-btn">×</span></span>`);
-    }
-
-    if (profile.bcell !== undefined && !isNaN(profile.bcell)) {
-        const st = profile.isBLow ? 'Disminuido' : 'Normal';
-        const icon = profile.isBLow ? 'fa-arrow-down' : 'fa-check';
-        tags.push(`<span class="patient-tag-chip tag-removeable" onclick="${onRemoveFnName}('bcell');" title="Clic para remover B-CD19+"><i class="fa-solid ${icon}"></i> Linfocitos B: ${profile.bcell}/mm³ (${st}) <span class="patient-tag-remove-btn">×</span></span>`);
-    }
-
-    if (profile.neutrophils !== undefined && !isNaN(profile.neutrophils)) {
-        const st = profile.isNeutLow ? 'Neutropenia' : 'Normal';
-        const icon = profile.isNeutLow ? 'fa-arrow-down' : 'fa-check';
-        tags.push(`<span class="patient-tag-chip tag-removeable" onclick="${onRemoveFnName}('neutrophils');" title="Clic para remover Neutrófilos"><i class="fa-solid ${icon}"></i> Neutrófilos: ${profile.neutrophils}/mm³ (${st}) <span class="patient-tag-remove-btn">×</span></span>`);
-    }
-
-    if (profile.categories && profile.categories.length > 0) {
+    if (profile.categories && Array.isArray(profile.categories)) {
         profile.categories.forEach(cat => {
-            tags.push(`<span class="patient-tag-chip tag-removeable" onclick="${onRemoveFnName}('cat_${escapeHtml(cat)}');" title="Clic para desmarcar categoría"><i class="fa-solid fa-layer-group"></i> ${escapeHtml(cat)} <span class="patient-tag-remove-btn">×</span></span>`);
+            tags.push(`<span class="patient-tag-chip tag-category tag-removeable" onclick="${onRemoveFnName}('cat_${cat}');" title="Categoría diagnóstica mapeada">
+                <i class="fa-solid fa-tags"></i> ${cat} <span class="patient-tag-remove-btn">x</span>
+            </span>`);
         });
     }
 
     return tags.join('');
 }
-
 function removePatientTag(key) {
     const profile = getPatientProfile();
     if (!profile) return;
