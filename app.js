@@ -403,7 +403,7 @@ function initAboutModal() {
             navigator.clipboard.writeText(aliasText).then(() => {
                 cafecitoAliasBtn.style.backgroundColor = '#10b981';
                 cafecitoAliasBtn.style.color = '#ffffff';
-                cafecitoAliasBtn.innerHTML = `<i class="fa-solid fa-check" style="color:#ffffff;"></i> <span>Alias MP: <strong>loren.erra.mp</strong> (¡Copiado! ✓)</span>`;
+                cafecitoAliasBtn.innerHTML = `<i class="fa-solid fa-check" style="color:#ffffff;"></i> <span>Alias MP: <strong>lorenzo.erra.mp</strong> (¡Copiado! ✓)</span>`;
             }).catch(err => {
                 console.error("Error al copiar alias:", err);
             });
