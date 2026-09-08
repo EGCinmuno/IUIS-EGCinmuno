@@ -160,14 +160,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Setup Theme & Language
     initTheme();
     initLanguage();
-    
+
     // 2. Setup Data
     if (DEFAULT_DATABASE.length > 0) {
         loadDataset(DEFAULT_DATABASE);
     } else {
         showNoDataState();
     }
-    
+
     // 3. Setup UI Events & About Modal & Patient Entity
     initUiEvents();
     initAboutModal();
@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function initTheme() {
     const savedTheme = localStorage.getItem('theme') || 'dark';
     document.body.className = `${savedTheme}-theme`;
-    
+
     const themeToggle = document.getElementById('theme-toggle');
     themeToggle.addEventListener('click', () => {
         const isDark = document.body.classList.contains('dark-theme');
@@ -205,34 +205,34 @@ function initLanguage() {
 
 function applyLanguage() {
     const t = I18N_APP[currentLang] || I18N_APP.es;
-    
+
     // Header
     const langText = document.getElementById('lang-toggle-text');
     if (langText) langText.textContent = t.langToggle;
-    
+
     const subtitle = document.getElementById('hdr-subtitle');
     if (subtitle) subtitle.textContent = t.subtitle;
-    
+
     const compareBtnText = document.getElementById('btn-compare-text');
     if (compareBtnText) compareBtnText.textContent = t.compareBtn;
 
     const igCalcBtnText = document.getElementById('btn-ig-calc-text');
     if (igCalcBtnText) igCalcBtnText.textContent = t.btnIgCalc;
-    
+
     // Stats labels
     const statGenesLabel = document.querySelector('#stat-genes-count + p');
     if (statGenesLabel) statGenesLabel.textContent = t.statGenesLabel;
-    
+
     const statActiveLabel = document.querySelector('#stat-active-filters + p');
     if (statActiveLabel) statActiveLabel.textContent = t.statActiveFiltersLabel;
-    
+
     const lblStatDiseases = document.getElementById('lbl-stat-diseases');
     if (lblStatDiseases) lblStatDiseases.textContent = t.statDiseasesLabel;
-    
+
     // Advanced filters panel
     const advTriggerSpan = document.querySelector('#advanced-filters-trigger .trigger-label span');
     if (advTriggerSpan) advTriggerSpan.textContent = t.advTriggerText;
-    
+
     const labels = document.querySelectorAll('.advanced-filters-grid .filter-group label');
     if (labels.length >= 8) {
         labels[0].textContent = t.lblMajorCat;
@@ -244,32 +244,32 @@ function applyLanguage() {
         labels[6].textContent = t.lblIgs;
         labels[7].textContent = t.lblNeutrophils;
     }
-    
+
     const filterFeatures = document.getElementById('filter-features');
     if (filterFeatures) filterFeatures.placeholder = t.phFeatures;
-    
+
     // Global search and buttons
     const globalSearch = document.getElementById('global-search-input');
     if (globalSearch) globalSearch.placeholder = t.phGlobal;
-    
+
     const clearFiltersBtnSpan = document.querySelector('#clear-all-filters-btn span');
     if (clearFiltersBtnSpan) clearFiltersBtnSpan.textContent = t.btnClearFilters;
-    
+
     const downloadTriggerSpan = document.querySelector('#download-btn-trigger > span');
     if (downloadTriggerSpan) downloadTriggerSpan.textContent = t.btnDownload;
-    
+
     const copyGenesSpan = document.querySelector('#copy-genes-clipboard .btn-text');
     if (copyGenesSpan) copyGenesSpan.textContent = t.btnCopyList;
-    
+
     const downloadTxtSpan = document.querySelector('#download-genes-txt span');
     if (downloadTxtSpan) downloadTxtSpan.textContent = t.btnDownloadTxt;
-    
+
     const downloadCsvSpan = document.querySelector('#download-table-csv span');
     if (downloadCsvSpan) downloadCsvSpan.textContent = t.btnDownloadCsv;
-    
+
     const chipsLabel = document.querySelector('.chips-label');
     if (chipsLabel) chipsLabel.textContent = t.chipsLabel;
-    
+
     const chipsClearBtn = document.getElementById('chips-clear-btn');
     if (chipsClearBtn) chipsClearBtn.textContent = t.chipsClear;
 
@@ -294,62 +294,62 @@ function applyLanguage() {
 
     const thResources = document.getElementById('th-resources');
     if (thResources) thResources.textContent = t.thResources;
-    
+
     // Table filter placeholders
     const fGene = document.getElementById('filter-gene');
     if (fGene) fGene.placeholder = t.phFilterGene;
-    
+
     const fDisease = document.getElementById('filter-disease');
     if (fDisease) fDisease.placeholder = t.phFilterDisease;
-    
+
     const fInheritance = document.getElementById('filter-inheritance-text');
     if (fInheritance) fInheritance.placeholder = t.phFilterInheritance;
-    
+
     const fOmim = document.getElementById('filter-omim');
     if (fOmim) fOmim.placeholder = t.phFilterOmim;
-    
+
     const fMajor = document.getElementById('filter-major-category-text');
     if (fMajor) fMajor.placeholder = t.phFilterCategory;
 
     const fSubcat = document.getElementById('filter-subcategory-text');
     if (fSubcat) fSubcat.placeholder = t.phFilterSubcategory;
-    
+
     // No results state
     const noResultsH3 = document.querySelector('#no-results-state h3');
     if (noResultsH3) noResultsH3.textContent = t.noResultsTitle;
-    
+
     const noResultsP = document.querySelector('#no-results-state p');
     if (noResultsP) noResultsP.textContent = t.noResultsDesc;
-    
+
     const noResultsBtn = document.getElementById('no-results-clear-btn');
     if (noResultsBtn) noResultsBtn.textContent = t.noResultsResetBtn;
-    
+
     // Page size label
     const pageSizeLabel = document.querySelector('.page-size-selector label');
     if (pageSizeLabel) pageSizeLabel.textContent = t.rowsPerPage;
-    
+
     const pageSizeSelectAll = document.querySelector('#page-size-select option[value="all"]');
     if (pageSizeSelectAll) pageSizeSelectAll.textContent = t.allRows;
-    
+
     // About modal
     const aboutTitle = document.getElementById('about-modal-title');
     if (aboutTitle) aboutTitle.textContent = t.aboutTitle;
-    
+
     const aboutWhoTitle = document.getElementById('about-who-title');
     if (aboutWhoTitle) aboutWhoTitle.textContent = t.aboutWhoTitle;
-    
+
     const aboutWhoDesc = document.getElementById('about-who-desc');
     if (aboutWhoDesc) aboutWhoDesc.innerHTML = t.aboutWhoDesc;
-    
+
     const aboutContactTitle = document.getElementById('about-contact-title');
     if (aboutContactTitle) aboutContactTitle.textContent = t.aboutContactTitle;
-    
+
     const aboutContactDesc = document.getElementById('about-contact-desc');
     if (aboutContactDesc) aboutContactDesc.textContent = t.aboutContactDesc;
-    
+
     const aboutFeedbackBtn = document.getElementById('about-feedback-btn');
     if (aboutFeedbackBtn) aboutFeedbackBtn.textContent = t.aboutFeedbackBtn;
-    
+
     const aboutCoffeeBtn = document.getElementById('about-coffee-btn');
     if (aboutCoffeeBtn) aboutCoffeeBtn.textContent = t.aboutCoffeeBtn;
 }
@@ -358,9 +358,9 @@ function initAboutModal() {
     const aboutBtn = document.getElementById('about-toggle');
     const aboutModal = document.getElementById('about-modal');
     const closeBtn = document.getElementById('about-modal-close');
-    
+
     if (!aboutModal) return;
-    
+
     const resetCafecitoBtn = () => {
         const cafecitoAliasBtn = document.getElementById('cafecito-alias-btn');
         if (cafecitoAliasBtn) {
@@ -377,19 +377,19 @@ function initAboutModal() {
         resetCafecitoBtn();
         aboutModal.classList.add('open');
     };
-    
+
     const closeModal = () => {
         aboutModal.classList.remove('open');
         resetCafecitoBtn();
     };
-    
+
     if (aboutBtn) aboutBtn.addEventListener('click', openModal);
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
-    
+
     aboutModal.addEventListener('click', (e) => {
         if (e.target === aboutModal) closeModal();
     });
-    
+
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && aboutModal.classList.contains('open')) {
             closeModal();
@@ -399,7 +399,7 @@ function initAboutModal() {
     const cafecitoAliasBtn = document.getElementById('cafecito-alias-btn');
     if (cafecitoAliasBtn) {
         cafecitoAliasBtn.addEventListener('click', () => {
-            const aliasText = 'loren.erra.mp';
+            const aliasText = 'lorenzo.erra.mp';
             navigator.clipboard.writeText(aliasText).then(() => {
                 cafecitoAliasBtn.style.backgroundColor = '#10b981';
                 cafecitoAliasBtn.style.color = '#ffffff';
@@ -439,13 +439,13 @@ function loadDataset(data) {
     database = data;
     filteredData = [...database];
     currentPage = 1;
-    
+
     // Check if redirected from categorias.html with active category selection
     checkStoredCategoryFilter();
-    
+
     // Auto-discover distinct categories and build filters
     buildFilterSelects();
-    
+
     // Run initial filter + stats + render
     applyFiltersAndRender();
 }
@@ -527,7 +527,7 @@ function buildFilterSelects() {
     setupMultiSelect('select-inheritance-wrapper', 'inheritance', inheritances, 'Cualquiera');
     setupMultiSelect('select-major-category-wrapper', 'majorCategory', majorCategories, 'Todas las Categorías');
     setupMultiSelect('select-subcategory-wrapper', 'subcategory', subcategories, 'Todas las Subcategorías');
-    
+
     setupMultiSelect('select-tcell-wrapper', 'tCell', tCells, 'Cualquiera');
     setupMultiSelect('select-bcell-wrapper', 'bCell', bCells, 'Cualquiera');
     setupMultiSelect('select-igs-wrapper', 'immunoglobulins', igs, 'Cualquiera');
@@ -538,12 +538,12 @@ function buildFilterSelects() {
 function setupMultiSelect(wrapperId, filterKey, options, placeholder) {
     const wrapper = document.getElementById(wrapperId);
     if (!wrapper) return;
-    
+
     selectWrappers[filterKey] = wrapper;
-    
+
     // Clear wrapper
     wrapper.innerHTML = '';
-    
+
     // Create header element
     const header = document.createElement('div');
     header.className = 'custom-select-header';
@@ -552,11 +552,11 @@ function setupMultiSelect(wrapperId, filterKey, options, placeholder) {
         <i data-lucide="chevron-down"></i>
     `;
     wrapper.appendChild(header);
-    
+
     // Create body element
     const body = document.createElement('div');
     body.className = 'custom-select-body';
-    
+
     // Create search input inside dropdown if option count is large
     if (options.length > 5) {
         const searchInput = document.createElement('input');
@@ -564,7 +564,7 @@ function setupMultiSelect(wrapperId, filterKey, options, placeholder) {
         searchInput.className = 'custom-select-search';
         searchInput.placeholder = 'Buscar opción...';
         body.appendChild(searchInput);
-        
+
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase();
             const optionElems = body.querySelectorAll('.custom-select-option');
@@ -573,11 +573,11 @@ function setupMultiSelect(wrapperId, filterKey, options, placeholder) {
                 opt.style.display = txt.includes(query) ? 'flex' : 'none';
             });
         });
-        
+
         // Prevent click in search from closing dropdown
         searchInput.addEventListener('click', (e) => e.stopPropagation());
     }
-    
+
     // Add "Select All" / "Clear" buttons
     const controls = document.createElement('div');
     controls.style.display = 'flex';
@@ -590,7 +590,7 @@ function setupMultiSelect(wrapperId, filterKey, options, placeholder) {
         <button class="btn-text text-danger" style="font-size:0.75rem;" id="none-btn">Ninguno</button>
     `;
     body.appendChild(controls);
-    
+
     controls.querySelector('#all-btn').addEventListener('click', (e) => {
         e.stopPropagation();
         const checkboxes = body.querySelectorAll('.custom-select-option input');
@@ -600,7 +600,7 @@ function setupMultiSelect(wrapperId, filterKey, options, placeholder) {
         });
         updateSelectionState();
     });
-    
+
     controls.querySelector('#none-btn').addEventListener('click', (e) => {
         e.stopPropagation();
         const checkboxes = body.querySelectorAll('.custom-select-option input');
@@ -610,25 +610,25 @@ function setupMultiSelect(wrapperId, filterKey, options, placeholder) {
         });
         updateSelectionState();
     });
-    
+
     // Create options list
     const optionsContainer = document.createElement('div');
     optionsContainer.style.maxHeight = '180px';
     optionsContainer.style.overflowY = 'auto';
-    
+
     options.forEach(optVal => {
         const option = document.createElement('div');
         option.className = 'custom-select-option';
         option.dataset.value = optVal;
-        
+
         const isSelected = activeFilters[filterKey].includes(optVal);
         if (isSelected) option.classList.add('selected');
-        
+
         option.innerHTML = `
             <input type="checkbox" ${isSelected ? 'checked' : ''}>
             <span>${optVal}</span>
         `;
-        
+
         option.addEventListener('click', (e) => {
             e.stopPropagation();
             const cb = option.querySelector('input');
@@ -636,19 +636,19 @@ function setupMultiSelect(wrapperId, filterKey, options, placeholder) {
             option.classList.toggle('selected', cb.checked);
             updateSelectionState();
         });
-        
+
         option.querySelector('input').addEventListener('click', (e) => {
             e.stopPropagation();
             option.classList.toggle('selected', e.target.checked);
             updateSelectionState();
         });
-        
+
         optionsContainer.appendChild(option);
     });
-    
+
     body.appendChild(optionsContainer);
     wrapper.appendChild(body);
-    
+
     // Click header triggers dropdown open
     header.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -658,16 +658,16 @@ function setupMultiSelect(wrapperId, filterKey, options, placeholder) {
             wrapper.classList.add('open');
         }
     });
-    
+
     // Update local state when options change
     function updateSelectionState() {
         const selected = [];
         body.querySelectorAll('.custom-select-option.selected').forEach(elem => {
             selected.push(elem.dataset.value);
         });
-        
+
         activeFilters[filterKey] = selected;
-        
+
         // Update header placeholder text
         const textSpan = header.querySelector('span');
         if (selected.length === 0) {
@@ -680,10 +680,10 @@ function setupMultiSelect(wrapperId, filterKey, options, placeholder) {
             textSpan.textContent = `${selected.length} seleccionados`;
             textSpan.classList.add('has-selection');
         }
-        
+
         applyFiltersAndRender();
     }
-    
+
     // Render initial state
     updateSelectionState();
     lucide.createIcons({ attrs: { class: 'icon-svg' } });
@@ -720,7 +720,7 @@ function initUiEvents() {
         { id: 'filter-subcategory-text', key: 'subcategoryText' },
         { id: 'global-search-input', key: 'global' }
     ];
-    
+
     searchInputs.forEach(inputObj => {
         const inputElem = document.getElementById(inputObj.id);
         if (inputElem) {
@@ -739,24 +739,24 @@ function initUiEvents() {
             if (inputElem) inputElem.value = '';
             activeFilters[inputObj.key] = '';
         });
-        
+
         // Clear array filters
         for (let key in activeFilters) {
             if (Array.isArray(activeFilters[key])) {
                 activeFilters[key] = [];
             }
         }
-        
+
         // Regenerate selects to reflect empty state
         buildFilterSelects();
-        
+
         applyFiltersAndRender();
     };
-    
+
     document.getElementById('clear-all-filters-btn').addEventListener('click', clearFilters);
     document.getElementById('no-results-clear-btn').addEventListener('click', clearFilters);
     document.getElementById('chips-clear-btn').addEventListener('click', clearFilters);
-    
+
     // 3. Advanced filters panel toggle
     const advTrigger = document.getElementById('advanced-filters-trigger');
     const advContent = document.getElementById('advanced-filters-content');
@@ -776,19 +776,19 @@ function initUiEvents() {
         e.stopPropagation();
         downloadMenu.classList.toggle('open');
     });
-    
+
     document.getElementById('copy-genes-clipboard').addEventListener('click', () => {
         copyGenesToClipboard();
     });
-    
+
     document.getElementById('download-genes-txt').addEventListener('click', () => {
         downloadGenesTxt();
     });
-    
+
     document.getElementById('download-table-csv').addEventListener('click', () => {
         downloadTableCsv();
     });
-    
+
     // Page Size Selector
     const pageSizeSelect = document.getElementById('page-size-select');
     if (pageSizeSelect) {
@@ -804,19 +804,19 @@ function initUiEvents() {
             renderPagination();
         });
     }
-    
+
     // 5. Drawer Close Action
     const drawerOverlay = document.getElementById('detail-drawer-overlay');
     const drawer = document.getElementById('detail-drawer');
     const closeDrawerBtn = document.getElementById('detail-drawer-close');
-    
+
     const closeDrawer = () => {
         drawer.classList.remove('open');
         drawerOverlay.classList.remove('open');
         // Unselect active rows
         document.querySelectorAll('#table-body tr').forEach(r => r.classList.remove('active-row'));
     };
-    
+
     closeDrawerBtn.addEventListener('click', closeDrawer);
     drawerOverlay.addEventListener('click', closeDrawer);
 
@@ -831,10 +831,10 @@ function initUiEvents() {
                 currentSortColumn = column;
                 currentSortDirection = 'asc';
             }
-            
+
             // Update table headers indicator
             updateSortIndicators();
-            
+
             // Re-render
             sortAndRenderTable();
         });
@@ -858,7 +858,7 @@ function updateSortIndicators() {
 /* --- Filtering Logic --- */
 function applyFiltersAndRender() {
     showLoading(true);
-    
+
     setTimeout(() => { // Async block to allow UI to show spinner
         const globalSearch = activeFilters.global.toLowerCase();
         const geneSearch = activeFilters.gene.toLowerCase();
@@ -867,7 +867,7 @@ function applyFiltersAndRender() {
         const omimSearch = activeFilters.omim.toLowerCase();
         const inheritanceTextSearch = activeFilters.inheritanceText.toLowerCase();
         const majorCategoryTextSearch = activeFilters.majorCategoryText.toLowerCase();
-        
+
         filteredData = database.filter(row => {
             // 1. Global search (across all fields)
             if (globalSearch) {
@@ -878,7 +878,7 @@ function applyFiltersAndRender() {
                 `.toLowerCase();
                 if (!combinedText.includes(globalSearch)) return false;
             }
-            
+
             // 2. Specific Column Text Filters
             if (geneSearch && !row.gene.toLowerCase().includes(geneSearch)) return false;
             if (diseaseSearch && !row.disease.toLowerCase().includes(diseaseSearch)) return false;
@@ -886,32 +886,32 @@ function applyFiltersAndRender() {
             if (omimSearch && !row.omim.toLowerCase().includes(omimSearch)) return false;
             if (inheritanceTextSearch && !row.inheritance.toLowerCase().includes(inheritanceTextSearch)) return false;
             if (majorCategoryTextSearch && !row.major_category.toLowerCase().includes(majorCategoryTextSearch)) return false;
-            
+
             // 3. Dropdowns Multi-Select Filters
             if (activeFilters.inheritance.length > 0 && !activeFilters.inheritance.includes(row.inheritance)) return false;
             if (activeFilters.majorCategory.length > 0 && !activeFilters.majorCategory.includes(row.major_category)) return false;
             if (activeFilters.subcategory.length > 0 && !activeFilters.subcategory.includes(row.subcategory)) return false;
-            
+
             // 4. Immunological Profile Multi-Select Filters
             if (activeFilters.tCell.length > 0 && !activeFilters.tCell.includes(row.t_cell)) return false;
             if (activeFilters.bCell.length > 0 && !activeFilters.bCell.includes(row.b_cell)) return false;
             if (activeFilters.immunoglobulins.length > 0 && !activeFilters.immunoglobulins.includes(row.immunoglobulins)) return false;
             if (activeFilters.neutrophils.length > 0 && !activeFilters.neutrophils.includes(row.neutrophils)) return false;
-            
+
             return true;
         });
-        
+
         currentPage = 1;
-        
+
         // Update dashboard counters
         updateStats();
-        
+
         // Update active filters chip UI
         renderActiveChips();
-        
+
         // Render current data
         sortAndRenderTable();
-        
+
         showLoading(false);
     }, 100);
 }
@@ -992,7 +992,7 @@ function animateGeneCount(targetCount) {
 function updateStats() {
     // 1. Animated Count & Impact Badge
     animateGeneCount(filteredData.length);
-    
+
     // 2. Active filters count
     let activeFiltersCount = 0;
     for (let key in activeFilters) {
@@ -1006,13 +1006,13 @@ function updateStats() {
     }
     const statActiveElem = document.getElementById('stat-active-filters');
     if (statActiveElem) statActiveElem.textContent = activeFiltersCount;
-    
+
     // Toggle visibility of clear filters button in actions bar
     const clearBtn = document.getElementById('clear-all-filters-btn');
     if (clearBtn) {
         clearBtn.style.display = activeFiltersCount > 0 ? 'inline-flex' : 'none';
     }
-    
+
     // 3. Unique Diseases
     const uniqueDiseases = new Set(
         filteredData
@@ -1028,10 +1028,10 @@ function renderActiveChips() {
     const chipContainer = document.getElementById('active-chips-container');
     const chipList = document.getElementById('chips-list');
     const countBadge = document.getElementById('chips-count-badge');
-    
+
     chipList.innerHTML = '';
     let totalChips = 0;
-    
+
     // Helper to add a chip
     const addChip = (label, filterKey, value, isArray = false) => {
         totalChips++;
@@ -1043,15 +1043,15 @@ function renderActiveChips() {
                 <i data-lucide="x"></i>
             </button>
         `;
-        
+
         chip.querySelector('button').addEventListener('click', (e) => {
             e.stopPropagation();
             removeFilter(filterKey, value, isArray);
         });
-        
+
         chipList.appendChild(chip);
     };
-     // Text search chips
+    // Text search chips
     if (activeFilters.global) addChip('Global', 'global', activeFilters.global);
     if (activeFilters.gene) addChip('Gen', 'gene', activeFilters.gene);
     if (activeFilters.disease) addChip('Enfermedad', 'disease', activeFilters.disease);
@@ -1059,7 +1059,7 @@ function renderActiveChips() {
     if (activeFilters.omim) addChip('OMIM', 'omim', activeFilters.omim);
     if (activeFilters.inheritanceText) addChip('Herencia (Cabecera)', 'inheritanceText', activeFilters.inheritanceText);
     if (activeFilters.majorCategoryText) addChip('Categoría (Cabecera)', 'majorCategoryText', activeFilters.majorCategoryText);
-    
+
     // Array selection chips
     const arrayLabels = {
         inheritance: 'Herencia',
@@ -1070,7 +1070,7 @@ function renderActiveChips() {
         immunoglobulins: 'Igs',
         neutrophils: 'Neutrófilos'
     };
-    
+
     for (let key in arrayLabels) {
         if (activeFilters[key] && activeFilters[key].length > 0) {
             activeFilters[key].forEach(val => {
@@ -1099,7 +1099,7 @@ function renderActiveChips() {
 
     lucide.createIcons();
 }
- 
+
 function removeFilter(key, value, isArray) {
     if (isArray) {
         // Remove item from filter list
@@ -1121,7 +1121,7 @@ function removeFilter(key, value, isArray) {
         const inputElem = document.getElementById(inputMap[key]);
         if (inputElem) inputElem.value = '';
     }
-    
+
     applyFiltersAndRender();
 }
 
@@ -1130,29 +1130,29 @@ function sortAndRenderTable() {
     // 1. Sort data
     const column = currentSortColumn;
     const dir = currentSortDirection;
-    
+
     filteredData.sort((a, b) => {
         let valA = a[column] || '';
         let valB = b[column] || '';
-        
+
         // Handle numeric sorting for OMIM
         if (column === 'omim') {
             const numA = parseInt(valA.replace(/[^0-9]/g, '')) || 0;
             const numB = parseInt(valB.replace(/[^0-9]/g, '')) || 0;
             return dir === 'asc' ? numA - numB : numB - numA;
         }
-        
+
         valA = valA.toString().toLowerCase();
         valB = valB.toString().toLowerCase();
-        
+
         if (valA < valB) return dir === 'asc' ? -1 : 1;
         if (valA > valB) return dir === 'asc' ? 1 : -1;
         return 0;
     });
-    
+
     // 2. Render table contents
     renderTableRows();
-    
+
     // 3. Render pagination
     renderPagination();
 }
@@ -1161,41 +1161,41 @@ function renderTableRows() {
     const tbody = document.getElementById('table-body');
     const noResults = document.getElementById('no-results-state');
     tbody.innerHTML = '';
-    
+
     if (filteredData.length === 0) {
         noResults.style.display = 'flex';
         document.getElementById('footer-info-text').textContent = 'Mostrando 0 registros';
         return;
     }
     noResults.style.display = 'none';
-    
+
     // Get start/end indices for current page
     const startIndex = (currentPage - 1) * rowsPerPage;
     const endIndex = Math.min(startIndex + rowsPerPage, filteredData.length);
-    
+
     document.getElementById('footer-info-text').textContent = `Mostrando ${startIndex + 1} a ${endIndex} de ${filteredData.length} registros`;
-    
+
     const pageData = filteredData.slice(startIndex, endIndex);
-    
+
     pageData.forEach((row, idx) => {
         const tr = document.createElement('tr');
-        
+
         // Clean gene name for links
         const cleanGene = cleanGeneSymbol(row.gene);
-        
+
         // Form external link HTML block
-        const omimHtml = row.omim 
+        const omimHtml = row.omim
             ? `<a href="https://www.omim.org/entry/${row.omim.replace(/[*+]/g, '').trim()}" target="_blank" class="badge-omim" onclick="event.stopPropagation();">${row.omim}</a>`
             : '<span class="text-muted">-</span>';
-            
+
         const inheritanceClass = getInheritanceClass(row.inheritance);
-        
+
         // Limit major category size
         let catText = row.major_category;
         if (catText.length > 50) {
             catText = catText.substring(0, 50) + '...';
         }
-        
+
         tr.innerHTML = `
             <td>
                 <span class="gene-badge">${row.gene}</span>
@@ -1224,7 +1224,7 @@ function renderTableRows() {
                 </div>
             </td>
         `;
-        
+
         // Click on row to open drawer
         tr.addEventListener('click', () => {
             // Clear prior active rows
@@ -1232,10 +1232,10 @@ function renderTableRows() {
             tr.classList.add('active-row');
             openDetailDrawer(row);
         });
-        
+
         tbody.appendChild(tr);
     });
-    
+
     lucide.createIcons();
 }
 
@@ -1257,12 +1257,12 @@ function cleanGeneSymbol(defect) {
 function filterByMajorCategory(category) {
     if (!category) return;
     activeFilters.majorCategory = [category];
-    
+
     // Clear text filter
     activeFilters.majorCategoryText = '';
     const majorInput = document.getElementById('filter-major-category-text');
     if (majorInput) majorInput.value = '';
-    
+
     // Refresh multi-select filters UI
     buildFilterSelects();
     // Run filters and render
@@ -1272,11 +1272,11 @@ function filterByMajorCategory(category) {
 function filterBySubcategory(subcategory) {
     if (!subcategory) return;
     activeFilters.subcategory = [subcategory];
-    
+
     activeFilters.subcategoryText = '';
     const subInput = document.getElementById('filter-subcategory-text');
     if (subInput) subInput.value = '';
-    
+
     buildFilterSelects();
     applyFiltersAndRender();
 }
@@ -1284,14 +1284,14 @@ function filterBySubcategory(subcategory) {
 /* --- Ig Reference Calculator Modal --- */
 /* --- Ig & Immunological Reference Calculator Modal --- */
 const IG_REFERENCE_RANGES = {
-    '0-3m':  { igg: [300, 1000], iga: [5, 50],   igm: [15, 100],  tcell: [2500, 5500], bcell: [600, 3000], neutrophils: [1000, 6000] },
-    '4-6m':  { igg: [200, 600],  iga: [10, 70],  igm: [20, 100],  tcell: [2200, 4800], bcell: [700, 2500], neutrophils: [1000, 6000] },
-    '7-12m': { igg: [300, 900],  iga: [15, 100], igm: [30, 120],  tcell: [1900, 4500], bcell: [600, 2000], neutrophils: [1500, 8000] },
-    '1-3y':  { igg: [400, 1000], iga: [20, 150], igm: [40, 150],  tcell: [1400, 3700], bcell: [500, 1500], neutrophils: [1500, 8000] },
-    '4-6y':  { igg: [500, 1200], iga: [30, 200], igm: [45, 180],  tcell: [1200, 3000], bcell: [300, 1000], neutrophils: [1500, 8000] },
-    '7-11y': { igg: [600, 1400], iga: [50, 250], igm: [50, 200],  tcell: [900, 2600],  bcell: [200, 600],  neutrophils: [1500, 8000] },
-    '12-16y':{ igg: [600, 1500], iga: [60, 300], igm: [50, 220],  tcell: [800, 2300],  bcell: [200, 500],  neutrophils: [1500, 8000] },
-    'adult': { igg: [700, 1600], iga: [70, 400], igm: [40, 230],  tcell: [700, 2100],  bcell: [100, 500],  neutrophils: [1500, 8000] }
+    '0-3m': { igg: [300, 1000], iga: [5, 50], igm: [15, 100], tcell: [2500, 5500], bcell: [600, 3000], neutrophils: [1000, 6000] },
+    '4-6m': { igg: [200, 600], iga: [10, 70], igm: [20, 100], tcell: [2200, 4800], bcell: [700, 2500], neutrophils: [1000, 6000] },
+    '7-12m': { igg: [300, 900], iga: [15, 100], igm: [30, 120], tcell: [1900, 4500], bcell: [600, 2000], neutrophils: [1500, 8000] },
+    '1-3y': { igg: [400, 1000], iga: [20, 150], igm: [40, 150], tcell: [1400, 3700], bcell: [500, 1500], neutrophils: [1500, 8000] },
+    '4-6y': { igg: [500, 1200], iga: [30, 200], igm: [45, 180], tcell: [1200, 3000], bcell: [300, 1000], neutrophils: [1500, 8000] },
+    '7-11y': { igg: [600, 1400], iga: [50, 250], igm: [50, 200], tcell: [900, 2600], bcell: [200, 600], neutrophils: [1500, 8000] },
+    '12-16y': { igg: [600, 1500], iga: [60, 300], igm: [50, 220], tcell: [800, 2300], bcell: [200, 500], neutrophils: [1500, 8000] },
+    'adult': { igg: [700, 1600], iga: [70, 400], igm: [40, 230], tcell: [700, 2100], bcell: [100, 500], neutrophils: [1500, 8000] }
 };
 
 function initIgCalcModal() {
@@ -1376,8 +1376,8 @@ function initIgCalcModal() {
 
             // 1. Immunoglobulins (Low / Decreased)
             const isIgLow = (!isNaN(iggVal) && iggVal < ref.igg[0]) ||
-                            (!isNaN(igaVal) && igaVal < ref.iga[0]) ||
-                            (!isNaN(igmVal) && igmVal < ref.igm[0]);
+                (!isNaN(igaVal) && igaVal < ref.iga[0]) ||
+                (!isNaN(igmVal) && igmVal < ref.igm[0]);
             if (isIgLow) {
                 const lowIgs = allIgs.filter(v => {
                     const l = v.toLowerCase();
@@ -1462,7 +1462,7 @@ function getPatientProfile() {
     let profile = {};
     const raw = localStorage.getItem('iei.patientProfile');
     if (raw) {
-        try { profile = JSON.parse(raw) || {}; } catch (e) {}
+        try { profile = JSON.parse(raw) || {}; } catch (e) { }
     }
 
     const rawSel = localStorage.getItem('iei_category_selection');
@@ -1472,7 +1472,7 @@ function getPatientProfile() {
             if (Array.isArray(arr) && arr.length > 0) {
                 profile.categories = arr;
             }
-        } catch (e) {}
+        } catch (e) { }
     }
 
     return profile;
@@ -1668,7 +1668,7 @@ function createResourceLink(type, identifier, tooltip) {
     let url = '#';
     let label = '';
     const cleanId = typeof identifier === 'string' ? identifier.replace(/[*+]/g, '').trim() : identifier;
-    
+
     switch (type) {
         case 'pubmed':
             url = `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(cleanId)}+AND+(%22inborn+errors+of+immunity%22+OR+%22immunodeficiency%22)`;
@@ -1699,7 +1699,7 @@ function createResourceLink(type, identifier, tooltip) {
             label = 'GN';
             break;
     }
-    
+
     return `
         <a href="${url}" target="_blank" class="link-pill ${type.replace('_search', '')}" 
            title="${tooltip}" onclick="event.stopPropagation();">
@@ -1712,10 +1712,10 @@ function createResourceLink(type, identifier, tooltip) {
 function renderPagination() {
     const container = document.getElementById('pagination-controls');
     container.innerHTML = '';
-    
+
     const totalPages = Math.ceil(filteredData.length / rowsPerPage);
     if (totalPages <= 1) return; // No pagination needed
-    
+
     // Previous Button
     const prevBtn = document.createElement('button');
     prevBtn.className = 'pagination-btn';
@@ -1729,16 +1729,16 @@ function renderPagination() {
         }
     });
     container.appendChild(prevBtn);
-    
+
     // Page Numbers logic
     const maxVisiblePages = 5;
     let startPage = Math.max(1, currentPage - 2);
     let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-    
+
     if (endPage - startPage + 1 < maxVisiblePages) {
         startPage = Math.max(1, endPage - maxVisiblePages + 1);
     }
-    
+
     if (startPage > 1) {
         const btn = document.createElement('button');
         btn.className = 'pagination-btn';
@@ -1749,7 +1749,7 @@ function renderPagination() {
             renderPagination();
         });
         container.appendChild(btn);
-        
+
         if (startPage > 2) {
             const dots = document.createElement('span');
             dots.textContent = '...';
@@ -1758,7 +1758,7 @@ function renderPagination() {
             container.appendChild(dots);
         }
     }
-    
+
     for (let i = startPage; i <= endPage; i++) {
         const btn = document.createElement('button');
         btn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
@@ -1770,7 +1770,7 @@ function renderPagination() {
         });
         container.appendChild(btn);
     }
-    
+
     if (endPage < totalPages) {
         if (endPage < totalPages - 1) {
             const dots = document.createElement('span');
@@ -1779,7 +1779,7 @@ function renderPagination() {
             dots.style.color = 'var(--text-muted)';
             container.appendChild(dots);
         }
-        
+
         const btn = document.createElement('button');
         btn.className = 'pagination-btn';
         btn.textContent = totalPages;
@@ -1790,7 +1790,7 @@ function renderPagination() {
         });
         container.appendChild(btn);
     }
-    
+
     // Next Button
     const nextBtn = document.createElement('button');
     nextBtn.className = 'pagination-btn';
@@ -1804,7 +1804,7 @@ function renderPagination() {
         }
     });
     container.appendChild(nextBtn);
-    
+
     lucide.createIcons();
 }
 
@@ -1813,15 +1813,15 @@ function openDetailDrawer(row) {
     const drawer = document.getElementById('detail-drawer');
     const drawerOverlay = document.getElementById('detail-drawer-overlay');
     const body = document.getElementById('detail-drawer-body');
-    
+
     // Header setup
     document.getElementById('drawer-gene-title').textContent = row.gene;
     document.getElementById('drawer-disease-subtitle').textContent = row.disease;
-    
+
     const catBadge = document.getElementById('drawer-category-badge');
     const match = row.major_category ? row.major_category.match(/Table \d+/i) : null;
     catBadge.textContent = match ? match[0] : 'Categoría';
-    
+
     const cleanGene = cleanGeneSymbol(row.gene);
     const cleanOmim = row.omim ? row.omim.replace(/[*+]/g, '').trim() : '';
 
@@ -1956,7 +1956,7 @@ function openDetailDrawer(row) {
             </div>
         </div>
     `;
-    
+
     // Open drawer transitions
     drawerOverlay.classList.add('open');
     drawer.classList.add('open');
@@ -1966,17 +1966,17 @@ function openDetailDrawer(row) {
 /* --- Downloads Actions Implementation --- */
 function downloadGenesTxt() {
     if (filteredData.length === 0) return;
-    
+
     // Extract unique, clean gene symbols sorted alphabetically
     const genes = new Set();
     filteredData.forEach(row => {
         const gene = cleanGeneSymbol(row.gene);
         if (gene) genes.add(gene);
     });
-    
+
     const geneList = Array.from(genes).sort();
     const content = geneList.join('\n');
-    
+
     triggerBlobDownload(content, 'iei_filtered_genes.txt', 'text/plain');
 }
 
@@ -2009,29 +2009,29 @@ function copyTextToClipboard(text) {
 
 function copyGenesToClipboard() {
     if (filteredData.length === 0) return;
-    
+
     // Extract unique, clean gene symbols sorted alphabetically
     const genes = new Set();
     filteredData.forEach(row => {
         const gene = cleanGeneSymbol(row.gene);
         if (gene) genes.add(gene);
     });
-    
+
     const geneList = Array.from(genes).sort();
     const content = geneList.join(', ');
-    
+
     copyTextToClipboard(content).then(() => {
         const btn = document.getElementById('copy-genes-clipboard');
         const textSpan = btn.querySelector('.btn-text');
         const iconWrapper = btn.querySelector('.icon-wrapper');
-        
+
         const origText = textSpan.textContent;
-        
+
         textSpan.textContent = '¡Copiado!';
         iconWrapper.innerHTML = '<i data-lucide="check"></i>';
         lucide.createIcons();
         btn.style.color = 'var(--color-pubmed)';
-        
+
         setTimeout(() => {
             textSpan.textContent = origText;
             iconWrapper.innerHTML = '<i data-lucide="copy"></i>';
@@ -2046,17 +2046,17 @@ function copyGenesToClipboard() {
 
 function downloadTableCsv() {
     if (filteredData.length === 0) return;
-    
+
     // Define headers
     const csvHeaders = [
-        'Disease', 'Genetic defect', 'Inheritance', 'GOF/DN', 'OMIM', 
-        'T cell count', 'B cell count', 'Immunoglobulin levels', 'Neutrophil count', 
-        'Other affected cells', 'Associated features', 'Major category', 'Subcategory', 
+        'Disease', 'Genetic defect', 'Inheritance', 'GOF/DN', 'OMIM',
+        'T cell count', 'B cell count', 'Immunoglobulin levels', 'Neutrophil count',
+        'Other affected cells', 'Associated features', 'Major category', 'Subcategory',
         'ICD9', 'ICD10', 'HPO IDs'
     ];
-    
+
     const csvRows = [csvHeaders.join(',')];
-    
+
     filteredData.forEach(row => {
         const hpos = row.hpo_ids ? row.hpo_ids.join(';') : '';
         const values = [
@@ -2065,7 +2065,7 @@ function downloadTableCsv() {
             row.other_cells, row.associated_features, row.major_category, row.subcategory,
             row.icd9, row.icd10, hpos
         ];
-        
+
         // Escape commas and double quotes for clean CSV syntax
         const escaped = values.map(val => {
             if (!val) return '""';
@@ -2076,10 +2076,10 @@ function downloadTableCsv() {
             }
             return `"${s}"`;
         });
-        
+
         csvRows.push(escaped.join(','));
     });
-    
+
     const content = '\uFEFF' + csvRows.join('\n'); // Prepend UTF-8 BOM for correct Excel characters rendering
     triggerBlobDownload(content, 'iei_filtered_database.csv', 'text/csv;charset=utf-8;');
 }
@@ -2103,7 +2103,7 @@ function initFileUpload() {
     const fileInput = document.getElementById('csv-file-input');
     const uploadBtn = document.getElementById('upload-trigger-btn');
     const defaultBtn = document.getElementById('load-default-btn');
-    
+
     uploadBtn.addEventListener('click', () => {
         fileInput.click();
     });
@@ -2113,23 +2113,23 @@ function initFileUpload() {
             window.location.href = 'categorias.html';
         });
     }
-    
+
     fileInput.addEventListener('change', (e) => {
         if (e.target.files.length > 0) {
             handleUploadedFile(e.target.files[0]);
         }
     });
-    
+
     // Drag Over highlights
     window.addEventListener('dragenter', (e) => {
         e.preventDefault();
         dropOverlay.classList.add('drag-active');
     });
-    
+
     dropOverlay.addEventListener('dragover', (e) => {
         e.preventDefault();
     });
-    
+
     dropOverlay.addEventListener('dragleave', (e) => {
         e.preventDefault();
         // Only remove if we actually leave window
@@ -2137,11 +2137,11 @@ function initFileUpload() {
             dropOverlay.classList.remove('drag-active');
         }
     });
-    
+
     dropOverlay.addEventListener('drop', (e) => {
         e.preventDefault();
         dropOverlay.classList.remove('drag-active');
-        
+
         if (e.dataTransfer.files.length > 0) {
             handleUploadedFile(e.dataTransfer.files[0]);
         }
@@ -2153,24 +2153,24 @@ function handleUploadedFile(file) {
         alert("Error: Por favor selecciona un archivo en formato CSV (.csv)");
         return;
     }
-    
+
     showLoading(true);
-    
+
     Papa.parse(file, {
         header: false, // Parse rows as arrays to let us resolve headers flexibly
         skipEmptyLines: true,
-        complete: function(results) {
+        complete: function (results) {
             const rows = results.data;
             if (rows.length < 2) {
                 alert("Error: El archivo CSV está vacío o no contiene suficientes registros.");
                 showLoading(false);
                 return;
             }
-            
+
             // Analyze the first row to perform fuzzy column mapping
             const rawHeaders = rows[0].map(h => h.toString().toLowerCase().trim());
             const mapping = getHeaderMapping(rawHeaders);
-            
+
             // Map remaining rows into database structure
             const newDatabase = [];
             for (let i = 1; i < rows.length; i++) {
@@ -2179,7 +2179,7 @@ function handleUploadedFile(file) {
                 while (row.length < rawHeaders.length) {
                     row.push('');
                 }
-                
+
                 const item = {
                     disease: getMappedValue(row, mapping.disease),
                     gene: getMappedValue(row, mapping.gene),
@@ -2199,7 +2199,7 @@ function handleUploadedFile(file) {
                     icd10: getMappedValue(row, mapping.icd10),
                     hpo_ids: []
                 };
-                
+
                 // Collect HPOs from any mapped HPO columns
                 const hpoSet = new Set();
                 mapping.hpoCols.forEach(idx => {
@@ -2212,15 +2212,15 @@ function handleUploadedFile(file) {
                     }
                 });
                 item.hpo_ids = Array.from(hpoSet).sort();
-                
+
                 newDatabase.push(item);
             }
-            
+
             // Load this new dataset into application
             loadDataset(newDatabase);
             alert(`Base de datos cargada con éxito! Se importaron ${newDatabase.length} registros.`);
         },
-        error: function(err) {
+        error: function (err) {
             alert("Error al analizar el archivo CSV: " + err.message);
             showLoading(false);
         }
@@ -2247,7 +2247,7 @@ function getHeaderMapping(headers) {
         icd10: -1,
         hpoCols: [] // Multiple columns can hold HPO codes
     };
-    
+
     // Fuzzy searches headers
     headers.forEach((h, idx) => {
         if (h.includes('disease') || h.includes('enfermedad')) map.disease = idx;
@@ -2266,13 +2266,13 @@ function getHeaderMapping(headers) {
         else if (h.includes('categorias_desglosed') || h.includes('categorias desglosed') || h.includes('category breakdown') || h.includes('desglosed')) map.categorias_desglosed = idx;
         else if (h.includes('icd9') || h.includes('icd-9') || h.includes('cie9')) map.icd9 = idx;
         else if (h.includes('icd10') || h.includes('icd-10') || h.includes('cie10')) map.icd10 = idx;
-        
+
         // HPO columns check
         if (h.includes('hpo') || h.includes('phenotype') || h.includes('fenotipo')) {
             map.hpoCols.push(idx);
         }
     });
-    
+
     // Fallbacks if not found (assigning positional indices from standard table)
     if (map.disease === -1) map.disease = 0;
     if (map.gene === -1) map.gene = 1;
@@ -2290,14 +2290,14 @@ function getHeaderMapping(headers) {
     if (map.categorias_desglosed === -1) map.categorias_desglosed = -1;
     if (map.icd9 === -1) map.icd9 = 13;
     if (map.icd10 === -1) map.icd10 = 14;
-    
+
     // If no HPO columns found by headers, assume columns 15 to end contain HPOs
     if (map.hpoCols.length === 0) {
         for (let idx = 15; idx < headers.length; idx++) {
             map.hpoCols.push(idx);
         }
     }
-    
+
     return map;
 }
 
