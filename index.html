@@ -27,6 +27,13 @@
     <link rel="stylesheet" href="styles.css?v=2.5">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Auth Guard -->
+    <script src="auth.js"></script>
+    <script>
+        if (!isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+    </script>
 </head>
 
 <body class="dark-theme">
@@ -55,6 +62,10 @@
                 </button>
                 <button id="lang-toggle" class="btn btn-outline btn-compact lang-toggle-btn" title="Cambiar Idioma">
                     <span id="lang-toggle-text">EN</span>
+                </button>
+                <button id="logout-btn" class="btn btn-outline btn-compact btn-logout" onclick="logout()" title="Cerrar Sesión" style="gap: 6px;">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span id="logout-btn-text">Salir</span>
                 </button>
             </div>
         </header>

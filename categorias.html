@@ -22,6 +22,13 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="categorias_desglosed_data.js?v=2.5"></script>
+    <!-- Auth Guard -->
+    <script src="auth.js"></script>
+    <script>
+        if (!isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+    </script>
 </head>
 
 <body class="dark-theme comparison-page">
@@ -52,6 +59,10 @@
                 <button class="btn btn-outline btn-compact header-action-btn" id="back-to-explorer-btn" type="button">
                     <i data-lucide="arrow-left"></i>
                     <span id="cat-back-btn-text">Volver al explorador</span>
+                </button>
+                <button id="logout-btn" class="btn btn-outline btn-compact btn-logout" onclick="logout()" title="Cerrar Sesión" style="gap: 6px;">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span id="logout-btn-text">Salir</span>
                 </button>
             </div>
         </header>

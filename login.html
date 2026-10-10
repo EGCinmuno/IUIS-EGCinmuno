@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Acceso — Interactive IEI (IUIS)</title>
+    <meta name="description" content="Acceso a la plataforma interactiva de Errores Innatos de la Inmunidad (IUIS).">
+    <link rel="icon" type="image/png" href="Logo.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Auth script -->
+    <script src="auth.js"></script>
+    <script>
+        // Si ya está autenticado, redirigir al index directamente
+        if (isAuthenticated()) {
+            window.location.href = 'index.html';
+        }
+
+        // Aplicar tema guardado inmediatamente en <html> y <body>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+</head>
+
+<body class="login-body">
+    <!-- Top Right Controls -->
+    <div class="login-top-controls">
+        <button class="btn-theme-toggle" id="theme-toggle-btn" title="Cambiar tema">
+            <i class="fa-solid fa-moon" id="theme-icon"></i>
+            <span id="theme-text">Modo Oscuro</span>
+        </button>
+    </div>
+
+    <!-- Background Ambient Glow -->
+    <div class="login-ambient-glow"></div>
+
+    <main class="login-page">
+        <div class="login-card">
+            <div class="login-brand">
+                <div class="login-logo-badge">
+                    <img src="Logo.png" alt="IUIS Inmuno" class="login-logo-img">
+                </div>
+                <h1>Interactive IEI</h1>
+                <p>Plataforma de Exploración genes IUIS</p>
+            </div>
+
+            <form class="login-form" id="login-form" autocomplete="on">
+                <div class="form-group">
+                    <label for="password-input">Clave de Acceso General</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="password-input" name="password" placeholder="Ingresa la clave..." 
+                               autocomplete="current-password" autocorrect="off" spellcheck="false" required autofocus>
+                        <button type="button" class="password-toggle-btn" id="password-toggle-btn" title="Mostrar/ocultar contraseña" tabindex="-1">
+                            <i class="fa-regular fa-eye" id="password-eye-icon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="login-remember-row">
+                    <label class="remember-checkbox-label">
+                        <input type="checkbox" id="remember-me" checked>
+                        <span>Recordar sesión en este dispositivo</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-login" id="login-btn">
+                    <span>Ingresar a la Plataforma</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+                <div class="login-error" id="login-error" style="display: none;"></div>
+            </form>
+
+            <div class="login-footer">
+                <p><i class="fa-solid fa-shield-halved"></i> Acceso restringido para docencia y consulta especializada</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            const form = document.getElementById('login-form');
+            const passwordInput = document.getElementById('password-input');
+            const toggleBtn = document.getElementById('password-toggle-btn');
+            const eyeIcon = document.getElementById('password-eye-icon');
+            const errorEl = document.getElementById('login-error');
+            const loginBtn = document.getElementById('login-btn');
+            const rememberMeCheckbox = document.getElementById('remember-me');
+            const themeToggleBtn = document.getElementById('theme-toggle-btn');
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+
+            // Función centralizada para aplicar el tema en todo el documento
+            function applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                document.body.className = `login-body ${theme}-theme`;
+                localStorage.setItem('theme', theme);
+
+                if (theme === 'light') {
+                    if (themeIcon) themeIcon.className = 'fa-solid fa-sun';
+                    if (themeText) themeText.textContent = 'Modo Claro';
+                } else {
+                    if (themeIcon) themeIcon.className = 'fa-solid fa-moon';
+                    if (themeText) themeText.textContent = 'Modo Oscuro';
+                }
+            }
+
+            // Aplicar tema guardado al cargar
+            const initialTheme = localStorage.getItem('theme') || 'dark';
+            applyTheme(initialTheme);
+
+            // Event listener para alternar tema
+            if (themeToggleBtn) {
+                themeToggleBtn.addEventListener('click', () => {
+                    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+                    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                    applyTheme(newTheme);
+                });
+            }
+
+            // Password reveal toggle
+            if (toggleBtn && passwordInput) {
+                toggleBtn.addEventListener('click', () => {
+                    const isPassword = passwordInput.type === 'password';
+                    passwordInput.type = isPassword ? 'text' : 'password';
+                    if (eyeIcon) {
+                        eyeIcon.className = isPassword ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
+                    }
+                });
+            }
+
+            // Form submit
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const pwd = passwordInput.value;
+                const remember = rememberMeCheckbox ? rememberMeCheckbox.checked : true;
+
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = `<span>Verificando...</span> <i class="fa-solid fa-spinner fa-spin"></i>`;
+                errorEl.style.display = 'none';
+
+                setTimeout(() => {
+                    const res = login(pwd, remember);
+                    if (res.success) {
+                        loginBtn.classList.add('success');
+                        loginBtn.innerHTML = `<span>Acceso concedido</span> <i class="fa-solid fa-check"></i>`;
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 400);
+                    } else {
+                        errorEl.textContent = res.error;
+                        errorEl.style.display = 'block';
+                        loginBtn.disabled = false;
+                        loginBtn.innerHTML = `<span>Ingresar a la Plataforma</span> <i class="fa-solid fa-arrow-right"></i>`;
+                        passwordInput.focus();
+                        passwordInput.select();
+                    }
+                }, 300);
+            });
+        });
+    </script>
+</body>
+
+</html>
