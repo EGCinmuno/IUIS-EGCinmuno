@@ -214,7 +214,11 @@
                     <div class="global-search-container">
                         <i data-lucide="search" class="global-search-icon"></i>
                         <input type="text" id="global-search-input"
-                            placeholder="Búsqueda rápida en todas las columnas...">
+                            placeholder="Búsqueda rápida en todas las columnas..."
+                            autocomplete="off" spellcheck="false">
+                        <button type="button" class="global-search-clear" id="global-search-clear-btn" aria-label="Limpiar búsqueda" style="display: none;">
+                            <i data-lucide="x"></i>
+                        </button>
                     </div>
 
                     <div class="actions-group-right">
@@ -340,7 +344,6 @@
                                 <!-- Dynamic rows go here -->
                             </tbody>
                         </table>
-                    </div>
                     </div>
 
                     <!-- Table Loading State -->

@@ -1,4 +1,4 @@
-﻿// Application state
+// Application state
 function escapeHtml(str) {
     if (str === null || str === undefined) return '';
     return String(str)
@@ -25,7 +25,8 @@ let activeFilters = {       // Active filter values
     features: '',
     omim: '',
     inheritanceText: '',
-    majorCategoryText: ''
+    majorCategoryText: '',
+    subcategoryText: ''
 };
 
 // Pagination state
@@ -47,22 +48,22 @@ const I18N_APP = {
     es: {
         langToggle: 'EN',
         subtitle: 'Base de Datos de Inmunodeficiencias y Errores Innatos de la Inmunidad (IUIS)',
-        compareBtn: 'Comparar categorÃ­as',
+        compareBtn: 'Comparar categorías',
         btnIgCalc: 'Ingresar valores',
         statGenesLabel: 'Genes Filtrados / Total',
         statActiveFiltersLabel: 'Filtros Activos',
         statDiseasesLabel: 'Enfermedades',
-        advTriggerText: 'Filtros ClÃ­nicos y Avanzados',
-        lblMajorCat: 'CategorÃ­a Mayor',
+        advTriggerText: 'Filtros Clínicos y Avanzados',
+        lblMajorCat: 'Categoría Mayor',
         lblInheritance: 'Herencia (Inheritance)',
-        lblSubcat: 'SubcategorÃ­a (Subcategory)',
-        lblFeatures: 'Manifestaciones ClÃ­nicas / Asociadas',
+        lblSubcat: 'Subcategoría (Subcategory)',
+        lblFeatures: 'Manifestaciones Clínicas / Asociadas',
         phFeatures: 'Ej. microcephaly, deafness, albinism...',
-        lblTCell: 'Recuento CÃ©lulas T',
-        lblBCell: 'Recuento CÃ©lulas B',
+        lblTCell: 'Recuento Células T',
+        lblBCell: 'Recuento Células B',
         lblIgs: 'Inmunoglobulinas',
-        lblNeutrophils: 'NeutrÃ³filos',
-        phGlobal: 'BÃºsqueda rÃ¡pida en todas las columnas...',
+        lblNeutrophils: 'Neutrófilos',
+        phGlobal: 'Búsqueda rápida en todas las columnas...',
         btnClearFilters: 'Limpiar Filtros',
         btnDownload: 'Descargar',
         btnCopyList: 'Copiar Genes Filtrados',
@@ -74,28 +75,28 @@ const I18N_APP = {
         thDisease: 'Enfermedad',
         thInheritance: 'Herencia',
         thOmim: 'OMIM',
-        thMajorCategory: 'CategorÃ­a Mayor',
+        thMajorCategory: 'Categoría Mayor',
         thSubcategory: 'Subtabla',
         thResources: 'Recursos',
         phFilterGene: 'Buscar gen...',
         phFilterDisease: 'Buscar enfermedad...',
         phFilterInheritance: 'Ej. AR, AD, XL...',
         phFilterOmim: 'Buscar OMIM...',
-        phFilterCategory: 'Buscar categorÃ­a...',
+        phFilterCategory: 'Buscar categoría...',
         phFilterSubcategory: 'Buscar subtabla...',
         noResultsTitle: 'No se encontraron resultados',
-        noResultsDesc: 'Intenta ajustar tus criterios de bÃºsqueda o limpia los filtros activos.',
+        noResultsDesc: 'Intenta ajustar tus criterios de búsqueda o limpia los filtros activos.',
         noResultsResetBtn: 'Restaurar Filtros',
-        rowsPerPage: 'Filas por pÃ¡gina:',
+        rowsPerPage: 'Filas por página:',
         allRows: 'Todas',
         showingInfo: (start, end, total) => `Mostrando ${start} a ${end} de ${total} registros`,
         aboutTitle: 'Acerca de la herramienta',
-        aboutWhoTitle: 'QuiÃ©nes somos',
-        aboutWhoDesc: 'Desarrollado por <strong>Lorenzo Erra</strong> â€” BioinformÃ¡tico / GenÃ³mico ClÃ­nico, como recurso educativo de genÃ³mica y medicina de precisiÃ³n. Basado en el <strong>reporte de la IUIS</strong>.',
+        aboutWhoTitle: 'Quiénes somos',
+        aboutWhoDesc: 'Desarrollado por <strong>Lorenzo Erra</strong> — Bioinformático / Genómico Clínico, como recurso educativo de genómica y medicina de precisión. Basado en el <strong>reporte de la IUIS</strong>.',
         aboutContactTitle: 'Feedback & Contacto',
-        aboutContactDesc: 'Â¿Encontraste un error, tenÃ©s una sugerencia o querÃ©s colaborar con el proyecto? Tu feedback ayuda a mejorar la herramienta para toda la comunidad.',
+        aboutContactDesc: '¿Encontraste un error, tenés una sugerencia o querés colaborar con el proyecto? Tu feedback ayuda a mejorar la herramienta para toda la comunidad.',
         aboutFeedbackBtn: 'Enviar Feedback',
-        aboutCoffeeBtn: 'Invitarme un cafecito â˜•'
+        aboutCoffeeBtn: 'Invitarme un cafecito ☕'
     },
     en: {
         langToggle: 'ES',
@@ -144,11 +145,11 @@ const I18N_APP = {
         showingInfo: (start, end, total) => `Showing ${start} to ${end} of ${total} records`,
         aboutTitle: 'About this tool',
         aboutWhoTitle: 'About Us',
-        aboutWhoDesc: 'Developed by <strong>Lorenzo Erra</strong> â€” Clinical Genomicist / Bioinformatician, as an educational resource for precision medicine. Based on the <strong>IUIS report</strong>.',
+        aboutWhoDesc: 'Developed by <strong>Lorenzo Erra</strong> — Clinical Genomicist / Bioinformatician, as an educational resource for precision medicine. Based on the <strong>IUIS report</strong>.',
         aboutContactTitle: 'Feedback & Contact',
         aboutContactDesc: 'Found a bug, have a suggestion, or want to collaborate? Your feedback helps improve this tool for the entire community.',
         aboutFeedbackBtn: 'Send Feedback',
-        aboutCoffeeBtn: 'Buy me a coffee â˜•'
+        aboutCoffeeBtn: 'Buy me a coffee ☕'
     }
 };
 
@@ -366,7 +367,7 @@ function initAboutModal() {
         if (cafecitoAliasBtn) {
             cafecitoAliasBtn.innerHTML = `
                 <i class="fa-solid fa-mug-hot" id="cafecito-icon"></i>
-                <span id="cafecito-btn-text">Invitarme un cafecito â˜•</span>
+                <span id="cafecito-btn-text">Invitarme un cafecito ☕</span>
             `;
             cafecitoAliasBtn.style.borderColor = '';
             cafecitoAliasBtn.style.backgroundColor = '';
@@ -403,7 +404,7 @@ function initAboutModal() {
             navigator.clipboard.writeText(aliasText).then(() => {
                 cafecitoAliasBtn.style.backgroundColor = '#10b981';
                 cafecitoAliasBtn.style.color = '#ffffff';
-                cafecitoAliasBtn.innerHTML = `<i class="fa-solid fa-check" style="color:#ffffff;"></i> <span>Alias MP: <strong>lorenzo.erra.mp</strong> (Â¡Copiado! âœ“)</span>`;
+                cafecitoAliasBtn.innerHTML = `<i class="fa-solid fa-check" style="color:#ffffff;"></i> <span>Alias MP: <strong>lorenzo.erra.mp</strong> (¡Copiado! ✓)</span>`;
             }).catch(err => {
                 console.error("Error al copiar alias:", err);
             });
@@ -425,7 +426,7 @@ function showNoDataState() {
             <td colspan="6" class="text-center" style="padding: 40px;">
                 <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
                     <i data-lucide="alert-circle" style="width:36px; height:36px; color:var(--text-muted);"></i>
-                    <h3>Base de datos vacÃ­a</h3>
+                    <h3>Base de datos vacía</h3>
                     <p>Por favor carga un archivo CSV para empezar a explorar los genes.</p>
                 </div>
             </td>
@@ -525,8 +526,8 @@ function buildFilterSelects() {
 
     // Create dropdown components
     setupMultiSelect('select-inheritance-wrapper', 'inheritance', inheritances, 'Cualquiera');
-    setupMultiSelect('select-major-category-wrapper', 'majorCategory', majorCategories, 'Todas las CategorÃ­as');
-    setupMultiSelect('select-subcategory-wrapper', 'subcategory', subcategories, 'Todas las SubcategorÃ­as');
+    setupMultiSelect('select-major-category-wrapper', 'majorCategory', majorCategories, 'Todas las Categorías');
+    setupMultiSelect('select-subcategory-wrapper', 'subcategory', subcategories, 'Todas las Subcategorías');
 
     setupMultiSelect('select-tcell-wrapper', 'tCell', tCells, 'Cualquiera');
     setupMultiSelect('select-bcell-wrapper', 'bCell', bCells, 'Cualquiera');
@@ -562,7 +563,7 @@ function setupMultiSelect(wrapperId, filterKey, options, placeholder) {
         const searchInput = document.createElement('input');
         searchInput.type = 'text';
         searchInput.className = 'custom-select-search';
-        searchInput.placeholder = 'Buscar opciÃ³n...';
+        searchInput.placeholder = 'Buscar opción...';
         body.appendChild(searchInput);
 
         searchInput.addEventListener('input', (e) => {
@@ -709,7 +710,7 @@ function initUiEvents() {
         });
     }
 
-    // 1. Text Filters Search
+    // 1. Text Filters Search - Instant count animation on typing + 1.8s table debounce
     const searchInputs = [
         { id: 'filter-gene', key: 'gene' },
         { id: 'filter-disease', key: 'disease' },
@@ -726,19 +727,73 @@ function initUiEvents() {
         if (inputElem) {
             inputElem.addEventListener('input', (e) => {
                 activeFilters[inputObj.key] = e.target.value.trim();
-                applyFiltersAndRenderDebounced();
+
+                // Toggle clear button for global search
+                if (inputObj.id === 'global-search-input') {
+                    const clearBtn = document.getElementById('global-search-clear-btn');
+                    if (clearBtn) clearBtn.style.display = e.target.value.trim() ? 'flex' : 'none';
+                }
+
+                // 1) Instant: Animate gene count drop/rise in real-time as user types
+                const matched = computeFilteredData();
+                animateGeneCount(matched.length);
+
+                // 2) Delayed: Update table only after user finishes typing (1.8s pause)
+                if (_tableUpdateTimer) clearTimeout(_tableUpdateTimer);
+                _tableUpdateTimer = setTimeout(() => {
+                    commitFiltersToTable(matched);
+                }, 1800);
+            });
+
+            // Allow user to press Enter to filter table immediately
+            inputElem.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (_tableUpdateTimer) clearTimeout(_tableUpdateTimer);
+                    commitFiltersToTable();
+                } else if (e.key === 'Escape') {
+                    inputElem.value = '';
+                    activeFilters[inputObj.key] = '';
+                    if (inputObj.id === 'global-search-input') {
+                        const clearBtn = document.getElementById('global-search-clear-btn');
+                        if (clearBtn) clearBtn.style.display = 'none';
+                    }
+                    if (_tableUpdateTimer) clearTimeout(_tableUpdateTimer);
+                    commitFiltersToTable();
+                }
             });
         }
     });
 
+    // Global search dedicated clear button
+    const globalSearchClearBtn = document.getElementById('global-search-clear-btn');
+    if (globalSearchClearBtn) {
+        globalSearchClearBtn.addEventListener('click', () => {
+            const globalInput = document.getElementById('global-search-input');
+            if (globalInput) {
+                globalInput.value = '';
+                globalInput.focus();
+            }
+            activeFilters.global = '';
+            globalSearchClearBtn.style.display = 'none';
+            if (_tableUpdateTimer) clearTimeout(_tableUpdateTimer);
+            commitFiltersToTable();
+        });
+    }
+
     // 2. Clear All Filters Buttons
     const clearFilters = () => {
+        if (_tableUpdateTimer) clearTimeout(_tableUpdateTimer);
+
         // Clear text filters
         searchInputs.forEach(inputObj => {
             const inputElem = document.getElementById(inputObj.id);
             if (inputElem) inputElem.value = '';
             activeFilters[inputObj.key] = '';
         });
+
+        const globalSearchClearBtn = document.getElementById('global-search-clear-btn');
+        if (globalSearchClearBtn) globalSearchClearBtn.style.display = 'none';
 
         // Clear array filters
         for (let key in activeFilters) {
@@ -750,12 +805,15 @@ function initUiEvents() {
         // Regenerate selects to reflect empty state
         buildFilterSelects();
 
-        applyFiltersAndRender();
+        commitFiltersToTable();
     };
 
-    document.getElementById('clear-all-filters-btn').addEventListener('click', clearFilters);
-    document.getElementById('no-results-clear-btn').addEventListener('click', clearFilters);
-    document.getElementById('chips-clear-btn').addEventListener('click', clearFilters);
+    const clearAllBtn = document.getElementById('clear-all-filters-btn');
+    if (clearAllBtn) clearAllBtn.addEventListener('click', clearFilters);
+    const noResultsClearBtn = document.getElementById('no-results-clear-btn');
+    if (noResultsClearBtn) noResultsClearBtn.addEventListener('click', clearFilters);
+    const chipsClearBtn = document.getElementById('chips-clear-btn');
+    if (chipsClearBtn) chipsClearBtn.addEventListener('click', clearFilters);
 
     // 3. Advanced filters panel toggle
     const advTrigger = document.getElementById('advanced-filters-trigger');
@@ -856,75 +914,78 @@ function updateSortIndicators() {
 }
 
 /* --- Filtering Logic --- */
-let _filterDebounceTimer = null;
-let _filterRenderTimer = null;
+let _tableUpdateTimer = null;
+let _geneAnimFrameId = null;
 
-function applyFiltersAndRenderDebounced() {
-    if (_filterDebounceTimer) clearTimeout(_filterDebounceTimer);
-    _filterDebounceTimer = setTimeout(() => {
-        applyFiltersAndRender();
-    }, 280);
+function computeFilteredData() {
+    const globalSearch = (activeFilters.global || '').toLowerCase();
+    const geneSearch = (activeFilters.gene || '').toLowerCase();
+    const diseaseSearch = (activeFilters.disease || '').toLowerCase();
+    const featuresSearch = (activeFilters.features || '').toLowerCase();
+    const omimSearch = (activeFilters.omim || '').toLowerCase();
+    const inheritanceTextSearch = (activeFilters.inheritanceText || '').toLowerCase();
+    const majorCategoryTextSearch = (activeFilters.majorCategoryText || '').toLowerCase();
+    const subcategoryTextSearch = (activeFilters.subcategoryText || '').toLowerCase();
+
+    return database.filter(row => {
+        // 1. Global search (across all fields)
+        if (globalSearch) {
+            const combinedText = `
+                ${row.gene} ${row.disease} ${row.inheritance} 
+                ${row.major_category} ${row.subcategory} ${row.associated_features} 
+                ${row.omim} ${row.t_cell} ${row.b_cell} ${row.immunoglobulins} ${row.neutrophils}
+            `.toLowerCase();
+            if (!combinedText.includes(globalSearch)) return false;
+        }
+
+        // 2. Specific Column Text Filters
+        if (geneSearch && !row.gene.toLowerCase().includes(geneSearch)) return false;
+        if (diseaseSearch && !row.disease.toLowerCase().includes(diseaseSearch)) return false;
+        if (featuresSearch && !row.associated_features.toLowerCase().includes(featuresSearch)) return false;
+        if (omimSearch && !row.omim.toLowerCase().includes(omimSearch)) return false;
+        if (inheritanceTextSearch && !row.inheritance.toLowerCase().includes(inheritanceTextSearch)) return false;
+        if (majorCategoryTextSearch && !row.major_category.toLowerCase().includes(majorCategoryTextSearch)) return false;
+        if (subcategoryTextSearch && !row.subcategory.toLowerCase().includes(subcategoryTextSearch)) return false;
+
+        // 3. Dropdowns Multi-Select Filters
+        if (activeFilters.inheritance.length > 0 && !activeFilters.inheritance.includes(row.inheritance)) return false;
+        if (activeFilters.majorCategory.length > 0 && !activeFilters.majorCategory.includes(row.major_category)) return false;
+        if (activeFilters.subcategory.length > 0 && !activeFilters.subcategory.includes(row.subcategory)) return false;
+
+        // 4. Immunological Profile Multi-Select Filters
+        if (activeFilters.tCell.length > 0 && !activeFilters.tCell.includes(row.t_cell)) return false;
+        if (activeFilters.bCell.length > 0 && !activeFilters.bCell.includes(row.b_cell)) return false;
+        if (activeFilters.immunoglobulins.length > 0 && !activeFilters.immunoglobulins.includes(row.immunoglobulins)) return false;
+        if (activeFilters.neutrophils.length > 0 && !activeFilters.neutrophils.includes(row.neutrophils)) return false;
+
+        return true;
+    });
+}
+
+function commitFiltersToTable(precomputedData = null) {
+    if (_tableUpdateTimer) {
+        clearTimeout(_tableUpdateTimer);
+        _tableUpdateTimer = null;
+    }
+    filteredData = precomputedData || computeFilteredData();
+    currentPage = 1;
+
+    // Update dashboard counters & badges
+    updateStats();
+
+    // Update active filters chip UI
+    renderActiveChips();
+
+    // Render current data
+    sortAndRenderTable();
 }
 
 function applyFiltersAndRender() {
-    if (_filterRenderTimer) clearTimeout(_filterRenderTimer);
-    showLoading(true);
-
-    _filterRenderTimer = setTimeout(() => { // Async block to allow UI to show spinner
-        const globalSearch = activeFilters.global.toLowerCase();
-        const geneSearch = activeFilters.gene.toLowerCase();
-        const diseaseSearch = activeFilters.disease.toLowerCase();
-        const featuresSearch = activeFilters.features.toLowerCase();
-        const omimSearch = activeFilters.omim.toLowerCase();
-        const inheritanceTextSearch = activeFilters.inheritanceText.toLowerCase();
-        const majorCategoryTextSearch = activeFilters.majorCategoryText.toLowerCase();
-
-        filteredData = database.filter(row => {
-            // 1. Global search (across all fields)
-            if (globalSearch) {
-                const combinedText = `
-                    ${row.gene} ${row.disease} ${row.inheritance} 
-                    ${row.major_category} ${row.subcategory} ${row.associated_features} 
-                    ${row.omim} ${row.t_cell} ${row.b_cell} ${row.immunoglobulins} ${row.neutrophils}
-                `.toLowerCase();
-                if (!combinedText.includes(globalSearch)) return false;
-            }
-
-            // 2. Specific Column Text Filters
-            if (geneSearch && !row.gene.toLowerCase().includes(geneSearch)) return false;
-            if (diseaseSearch && !row.disease.toLowerCase().includes(diseaseSearch)) return false;
-            if (featuresSearch && !row.associated_features.toLowerCase().includes(featuresSearch)) return false;
-            if (omimSearch && !row.omim.toLowerCase().includes(omimSearch)) return false;
-            if (inheritanceTextSearch && !row.inheritance.toLowerCase().includes(inheritanceTextSearch)) return false;
-            if (majorCategoryTextSearch && !row.major_category.toLowerCase().includes(majorCategoryTextSearch)) return false;
-
-            // 3. Dropdowns Multi-Select Filters
-            if (activeFilters.inheritance.length > 0 && !activeFilters.inheritance.includes(row.inheritance)) return false;
-            if (activeFilters.majorCategory.length > 0 && !activeFilters.majorCategory.includes(row.major_category)) return false;
-            if (activeFilters.subcategory.length > 0 && !activeFilters.subcategory.includes(row.subcategory)) return false;
-
-            // 4. Immunological Profile Multi-Select Filters
-            if (activeFilters.tCell.length > 0 && !activeFilters.tCell.includes(row.t_cell)) return false;
-            if (activeFilters.bCell.length > 0 && !activeFilters.bCell.includes(row.b_cell)) return false;
-            if (activeFilters.immunoglobulins.length > 0 && !activeFilters.immunoglobulins.includes(row.immunoglobulins)) return false;
-            if (activeFilters.neutrophils.length > 0 && !activeFilters.neutrophils.includes(row.neutrophils)) return false;
-
-            return true;
-        });
-
-        currentPage = 1;
-
-        // Update dashboard counters
-        updateStats();
-
-        // Update active filters chip UI
-        renderActiveChips();
-
-        // Render current data
-        sortAndRenderTable();
-
-        showLoading(false);
-    }, 100);
+    if (_tableUpdateTimer) {
+        clearTimeout(_tableUpdateTimer);
+        _tableUpdateTimer = null;
+    }
+    commitFiltersToTable();
 }
 
 function showLoading(show) {
@@ -933,7 +994,7 @@ function showLoading(show) {
 }
 
 /* --- Dashboard Statistics --- */
-function animateGeneCount(targetCount, instant = false) {
+function animateGeneCount(targetCount) {
     const countElem = document.getElementById('stat-genes-count');
     const progressElem = document.getElementById('stat-genes-progress');
     const impactBadge = document.getElementById('stat-impact-badge');
@@ -941,7 +1002,19 @@ function animateGeneCount(targetCount, instant = false) {
     if (!countElem) return;
 
     const total = database.length;
+    let startVal = parseInt(countElem.dataset.currentVal, 10);
+    if (isNaN(startVal)) {
+        const textParts = countElem.textContent.split('/');
+        startVal = parseInt(textParts[0].trim(), 10);
+        if (isNaN(startVal)) startVal = total;
+    }
     countElem.dataset.currentVal = targetCount;
+
+    // Trigger stat card pulse animation subtly without jitter
+    if (statCard && !statCard.classList.contains('updated')) {
+        statCard.classList.add('updated');
+        setTimeout(() => statCard.classList.remove('updated'), 400);
+    }
 
     // Progress bar width
     const percentage = total > 0 ? (targetCount / total) * 100 : 0;
@@ -955,32 +1028,28 @@ function animateGeneCount(targetCount, instant = false) {
             const reductionPct = Math.round((1 - targetCount / total) * 100);
             impactBadge.innerHTML = `<i data-lucide="sparkles" style="width:12px;height:12px;"></i> -${reductionPct}% (${targetCount} genes)`;
             impactBadge.style.display = 'inline-flex';
-            lucide.createIcons();
+            if (window.lucide) lucide.createIcons();
         } else if (targetCount === 0) {
             impactBadge.innerHTML = `<i data-lucide="alert-triangle" style="width:12px;height:12px;"></i> 0 genes`;
             impactBadge.style.display = 'inline-flex';
-            lucide.createIcons();
+            if (window.lucide) lucide.createIcons();
         } else {
             impactBadge.style.display = 'none';
         }
     }
 
-    // Skip animation when filtering (avoids layout thrashing / scroll jitter)
-    if (instant) {
+    // Smooth counter animation: cancel previous animation to prevent jitter when typing fast
+    if (_geneAnimFrameId) {
+        cancelAnimationFrame(_geneAnimFrameId);
+        _geneAnimFrameId = null;
+    }
+
+    if (startVal === targetCount) {
         countElem.textContent = `${targetCount} / ${total}`;
         return;
     }
 
-    // Trigger stat card pulse animation only for non-instant updates
-    if (statCard) {
-        statCard.classList.remove('updated');
-        void statCard.offsetWidth; // trigger reflow
-        statCard.classList.add('updated');
-    }
-
-    // Smooth counter animation
-    const startVal = parseInt(countElem.textContent.split('/')[0].trim(), 10) || targetCount;
-    const duration = 350;
+    const duration = 280;
     const startTime = performance.now();
 
     function step(currentTime) {
@@ -992,18 +1061,19 @@ function animateGeneCount(targetCount, instant = false) {
         countElem.textContent = `${currentVal} / ${total}`;
 
         if (progressRatio < 1) {
-            requestAnimationFrame(step);
+            _geneAnimFrameId = requestAnimationFrame(step);
         } else {
             countElem.textContent = `${targetCount} / ${total}`;
+            _geneAnimFrameId = null;
         }
     }
 
-    requestAnimationFrame(step);
+    _geneAnimFrameId = requestAnimationFrame(step);
 }
 
 function updateStats() {
     // 1. Animated Count & Impact Badge
-    animateGeneCount(filteredData.length, true);
+    animateGeneCount(filteredData.length);
 
     // 2. Active filters count
     let activeFiltersCount = 0;
@@ -1070,17 +1140,17 @@ function renderActiveChips() {
     if (activeFilters.features) addChip('Clinica', 'features', activeFilters.features);
     if (activeFilters.omim) addChip('OMIM', 'omim', activeFilters.omim);
     if (activeFilters.inheritanceText) addChip('Herencia (Cabecera)', 'inheritanceText', activeFilters.inheritanceText);
-    if (activeFilters.majorCategoryText) addChip('CategorÃ­a (Cabecera)', 'majorCategoryText', activeFilters.majorCategoryText);
+    if (activeFilters.majorCategoryText) addChip('Categoría (Cabecera)', 'majorCategoryText', activeFilters.majorCategoryText);
 
     // Array selection chips
     const arrayLabels = {
         inheritance: 'Herencia',
         majorCategory: 'Cat. Mayor',
         subcategory: 'Subcat.',
-        tCell: 'CÃ©lulas T',
-        bCell: 'CÃ©lulas B',
+        tCell: 'Células T',
+        bCell: 'Células B',
         immunoglobulins: 'Igs',
-        neutrophils: 'NeutrÃ³filos'
+        neutrophils: 'Neutrófilos'
     };
 
     for (let key in arrayLabels) {
@@ -1304,38 +1374,38 @@ const PARAM_DEFINITIONS = [
     { id: 'igm', name: 'IgM', category: 'Inmunoglobulinas', unit: 'mg/dL', defaultSelected: true, group: 'ig' },
 
     // Serie Leucocitaria
-    { id: 'leukocytes', name: 'Leucocitos (Absoluto)', category: 'Serie Leucocitaria', unit: '/ÂµL', defaultSelected: false, group: 'leuko' },
-    { id: 'neutrophils', name: 'NeutrÃ³filos (Absoluto)', category: 'Serie Leucocitaria', unit: '/ÂµL', defaultSelected: true, group: 'leuko' },
-    { id: 'neutrophils_pct', name: 'NeutrÃ³filos (%)', category: 'Serie Leucocitaria', unit: '%', defaultSelected: false, group: 'leuko' },
-    { id: 'lymphocytes', name: 'Linfocitos (Absoluto)', category: 'Serie Leucocitaria', unit: '/ÂµL', defaultSelected: false, group: 'leuko' },
+    { id: 'leukocytes', name: 'Leucocitos (Absoluto)', category: 'Serie Leucocitaria', unit: '/µL', defaultSelected: false, group: 'leuko' },
+    { id: 'neutrophils', name: 'Neutrófilos (Absoluto)', category: 'Serie Leucocitaria', unit: '/µL', defaultSelected: true, group: 'leuko' },
+    { id: 'neutrophils_pct', name: 'Neutrófilos (%)', category: 'Serie Leucocitaria', unit: '%', defaultSelected: false, group: 'leuko' },
+    { id: 'lymphocytes', name: 'Linfocitos (Absoluto)', category: 'Serie Leucocitaria', unit: '/µL', defaultSelected: false, group: 'leuko' },
     { id: 'lymphocytes_pct', name: 'Linfocitos (%)', category: 'Serie Leucocitaria', unit: '%', defaultSelected: false, group: 'leuko' },
-    { id: 'monocytes', name: 'Monocitos (Absoluto)', category: 'Serie Leucocitaria', unit: '/ÂµL', defaultSelected: false, group: 'leuko' },
+    { id: 'monocytes', name: 'Monocitos (Absoluto)', category: 'Serie Leucocitaria', unit: '/µL', defaultSelected: false, group: 'leuko' },
     { id: 'monocytes_pct', name: 'Monocitos (%)', category: 'Serie Leucocitaria', unit: '%', defaultSelected: false, group: 'leuko' },
-    { id: 'eosinophils', name: 'EosinÃ³filos (Absoluto)', category: 'Serie Leucocitaria', unit: '/ÂµL', defaultSelected: false, group: 'leuko' },
-    { id: 'eosinophils_pct', name: 'EosinÃ³filos (%)', category: 'Serie Leucocitaria', unit: '%', defaultSelected: false, group: 'leuko' },
-    { id: 'basophils', name: 'BasÃ³filos (Absoluto)', category: 'Serie Leucocitaria', unit: '/ÂµL', defaultSelected: false, group: 'leuko' },
-    { id: 'basophils_pct', name: 'BasÃ³filos (%)', category: 'Serie Leucocitaria', unit: '%', defaultSelected: false, group: 'leuko' },
+    { id: 'eosinophils', name: 'Eosinófilos (Absoluto)', category: 'Serie Leucocitaria', unit: '/µL', defaultSelected: false, group: 'leuko' },
+    { id: 'eosinophils_pct', name: 'Eosinófilos (%)', category: 'Serie Leucocitaria', unit: '%', defaultSelected: false, group: 'leuko' },
+    { id: 'basophils', name: 'Basófilos (Absoluto)', category: 'Serie Leucocitaria', unit: '/µL', defaultSelected: false, group: 'leuko' },
+    { id: 'basophils_pct', name: 'Basófilos (%)', category: 'Serie Leucocitaria', unit: '%', defaultSelected: false, group: 'leuko' },
 
     // Subpoblaciones Linfocitarias
-    { id: 'tcell', name: 'Linfocitos T CD3+ (Absoluto)', category: 'Subpoblaciones Linfocitarias', unit: 'cel/mmÂ³', defaultSelected: true, group: 'subpop' },
+    { id: 'tcell', name: 'Linfocitos T CD3+ (Absoluto)', category: 'Subpoblaciones Linfocitarias', unit: 'cel/mm³', defaultSelected: true, group: 'subpop' },
     { id: 'tcell_pct', name: '% Linfocitos T CD3+', category: 'Subpoblaciones Linfocitarias', unit: '%', defaultSelected: false, group: 'subpop' },
-    { id: 'tcd4', name: 'Linfocitos T CD4+ (Absoluto)', category: 'Subpoblaciones Linfocitarias', unit: 'cel/mmÂ³', defaultSelected: false, group: 'subpop' },
+    { id: 'tcd4', name: 'Linfocitos T CD4+ (Absoluto)', category: 'Subpoblaciones Linfocitarias', unit: 'cel/mm³', defaultSelected: false, group: 'subpop' },
     { id: 'tcd4_pct', name: '% Linfocitos T CD4+', category: 'Subpoblaciones Linfocitarias', unit: '%', defaultSelected: false, group: 'subpop' },
-    { id: 'tcd8', name: 'Linfocitos T CD8+ (Absoluto)', category: 'Subpoblaciones Linfocitarias', unit: 'cel/mmÂ³', defaultSelected: false, group: 'subpop' },
+    { id: 'tcd8', name: 'Linfocitos T CD8+ (Absoluto)', category: 'Subpoblaciones Linfocitarias', unit: 'cel/mm³', defaultSelected: false, group: 'subpop' },
     { id: 'tcd8_pct', name: '% Linfocitos T CD8+', category: 'Subpoblaciones Linfocitarias', unit: '%', defaultSelected: false, group: 'subpop' },
-    { id: 'bcell', name: 'Linfocitos B CD19+ (Absoluto)', category: 'Subpoblaciones Linfocitarias', unit: 'cel/mmÂ³', defaultSelected: true, group: 'subpop' },
+    { id: 'bcell', name: 'Linfocitos B CD19+ (Absoluto)', category: 'Subpoblaciones Linfocitarias', unit: 'cel/mm³', defaultSelected: true, group: 'subpop' },
     { id: 'bcell_pct', name: '% Linfocitos B CD19+', category: 'Subpoblaciones Linfocitarias', unit: '%', defaultSelected: false, group: 'subpop' },
-    { id: 'nkcell', name: 'NK CD3-CD56+ (Absoluto)', category: 'Subpoblaciones Linfocitarias', unit: 'cel/mmÂ³', defaultSelected: false, group: 'subpop' },
-    { id: 'nkcell_pct', name: '% CÃ©lulas NK CD3-CD56+', category: 'Subpoblaciones Linfocitarias', unit: '%', defaultSelected: false, group: 'subpop' },
-    { id: 'tcr_ab', name: 'Linfocitos TCR Î±Î²+ (Absoluto)', category: 'Subpoblaciones Linfocitarias', unit: 'cel/mmÂ³', defaultSelected: false, group: 'subpop' },
-    { id: 'tcr_ab_pct', name: '% Linfocitos TCR Î±Î²+', category: 'Subpoblaciones Linfocitarias', unit: '%', defaultSelected: false, group: 'subpop' },
-    { id: 'tcr_gd', name: 'Linfocitos TCR Î³Î´+ (Absoluto)', category: 'Subpoblaciones Linfocitarias', unit: 'cel/mmÂ³', defaultSelected: false, group: 'subpop' },
-    { id: 'tcr_gd_pct', name: '% Linfocitos TCR Î³Î´+', category: 'Subpoblaciones Linfocitarias', unit: '%', defaultSelected: false, group: 'subpop' }
+    { id: 'nkcell', name: 'NK CD3-CD56+ (Absoluto)', category: 'Subpoblaciones Linfocitarias', unit: 'cel/mm³', defaultSelected: false, group: 'subpop' },
+    { id: 'nkcell_pct', name: '% Células NK CD3-CD56+', category: 'Subpoblaciones Linfocitarias', unit: '%', defaultSelected: false, group: 'subpop' },
+    { id: 'tcr_ab', name: 'Linfocitos TCR αβ+ (Absoluto)', category: 'Subpoblaciones Linfocitarias', unit: 'cel/mm³', defaultSelected: false, group: 'subpop' },
+    { id: 'tcr_ab_pct', name: '% Linfocitos TCR αβ+', category: 'Subpoblaciones Linfocitarias', unit: '%', defaultSelected: false, group: 'subpop' },
+    { id: 'tcr_gd', name: 'Linfocitos TCR γδ+ (Absoluto)', category: 'Subpoblaciones Linfocitarias', unit: 'cel/mm³', defaultSelected: false, group: 'subpop' },
+    { id: 'tcr_gd_pct', name: '% Linfocitos TCR γδ+', category: 'Subpoblaciones Linfocitarias', unit: '%', defaultSelected: false, group: 'subpop' }
 ];
 
 const IG_REFERENCE_RANGES = {
     'cord': {
-        label: 'CordÃ³n / Neonato (0-1 m)',
+        label: 'Cordón / Neonato (0-1 m)',
         igg: [600, 1600], iga: [0, 15], igm: [5, 30],
         leukocytes: [9000, 30000], neutrophils: [6000, 26000], neutrophils_pct: [50, 80],
         eosinophils: [100, 1000], eosinophils_pct: [1, 5], basophils: [0, 300], basophils_pct: [0, 2],
@@ -1377,7 +1447,7 @@ const IG_REFERENCE_RANGES = {
         tcr_gd: [139, 214], tcr_gd_pct: [2.0, 3.0]
     },
     '12-24m': {
-        label: '12 - 24 meses (1 - 2 aÃ±os)',
+        label: '12 - 24 meses (1 - 2 años)',
         igg: [400, 1000], iga: [20, 150], igm: [40, 150],
         leukocytes: [6000, 17000], neutrophils: [1500, 8500], neutrophils_pct: [25, 55],
         eosinophils: [100, 800], eosinophils_pct: [1, 5], basophils: [0, 200], basophils_pct: [0, 2],
@@ -1391,7 +1461,7 @@ const IG_REFERENCE_RANGES = {
         tcr_gd: [123, 280], tcr_gd_pct: [2.5, 5.5]
     },
     '24-36m': {
-        label: '24 - 36 meses (2 - 3 aÃ±os)',
+        label: '24 - 36 meses (2 - 3 años)',
         igg: [450, 1050], iga: [25, 160], igm: [40, 160],
         leukocytes: [5500, 15500], neutrophils: [1500, 8000], neutrophils_pct: [30, 60],
         eosinophils: [100, 700], eosinophils_pct: [1, 5], basophils: [0, 200], basophils_pct: [0, 2],
@@ -1405,7 +1475,7 @@ const IG_REFERENCE_RANGES = {
         tcr_gd: [127, 385], tcr_gd_pct: [3.0, 7.0]
     },
     '36-80m': {
-        label: '36 - 80 meses (3 - 6.6 aÃ±os)',
+        label: '36 - 80 meses (3 - 6.6 años)',
         igg: [500, 1200], iga: [30, 200], igm: [45, 180],
         leukocytes: [5000, 14500], neutrophils: [1500, 8000], neutrophils_pct: [35, 65],
         eosinophils: [100, 700], eosinophils_pct: [1, 5], basophils: [0, 200], basophils_pct: [0, 2],
@@ -1419,7 +1489,7 @@ const IG_REFERENCE_RANGES = {
         tcr_gd: [123, 257], tcr_gd_pct: [4.0, 7.0]
     },
     '80-210m': {
-        label: '80 - 210 meses (6.6 - 17.5 aÃ±os)',
+        label: '80 - 210 meses (6.6 - 17.5 años)',
         igg: [600, 1450], iga: [50, 280], igm: [50, 220],
         leukocytes: [4500, 13000], neutrophils: [1800, 7500], neutrophils_pct: [40, 70],
         eosinophils: [50, 600], eosinophils_pct: [0, 6], basophils: [0, 200], basophils_pct: [0, 2],
@@ -1433,7 +1503,7 @@ const IG_REFERENCE_RANGES = {
         tcr_gd: [113, 237], tcr_gd_pct: [5.0, 8.0]
     },
     'adult': {
-        label: 'Adulto (> 18 aÃ±os)',
+        label: 'Adulto (> 18 años)',
         igg: [700, 1600], iga: [70, 400], igm: [40, 230],
         leukocytes: [4000, 11000], neutrophils: [2000, 6900], neutrophils_pct: [37.0, 80.8],
         eosinophils: [0, 700], eosinophils_pct: [0.0, 7.0], basophils: [0, 200], basophils_pct: [0.0, 2.0],
@@ -1603,7 +1673,7 @@ function initIgCalcModal() {
             inputsContainer.innerHTML = `
                 <div style="grid-column: 1 / -1; padding: 24px; text-align: center; color: var(--text-muted); background: var(--bg-surface-hover); border: 1px dashed var(--border-color); border-radius: var(--radius-md);">
                     <i class="fa-solid fa-hand-pointer" style="font-size: 1.5rem; margin-bottom: 8px;"></i>
-                    <p>Haz clic en las cajitas superiores para seleccionar los parÃ¡metros que deseas ingresar.</p>
+                    <p>Haz clic en las cajitas superiores para seleccionar los parámetros que deseas ingresar.</p>
                 </div>
             `;
             return;
@@ -1757,7 +1827,7 @@ function updateIgCalcTable() {
     const selectedParams = PARAM_DEFINITIONS.filter(p => selectedParamIds.has(p.id));
 
     if (selectedParams.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding: 14px;">Sin parÃ¡metros seleccionados</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding: 14px;">Sin parámetros seleccionados</td></tr>`;
         return;
     }
 
@@ -1879,7 +1949,7 @@ function buildPatientEntityTags(profile, onRemoveFnName) {
 
     if (profile.categories && Array.isArray(profile.categories)) {
         profile.categories.forEach(cat => {
-            tags.push(`<span class="patient-tag-chip tag-category tag-removeable" onclick="${onRemoveFnName}('cat_${cat}');" title="CategorÃ­a diagnÃ³stica mapeada">
+            tags.push(`<span class="patient-tag-chip tag-category tag-removeable" onclick="${onRemoveFnName}('cat_${cat}');" title="Categoría diagnóstica mapeada">
                 <i class="fa-solid fa-tags"></i> ${cat} <span class="patient-tag-remove-btn">x</span>
             </span>`);
         });
@@ -2071,7 +2141,7 @@ function openDetailDrawer(row) {
 
     const catBadge = document.getElementById('drawer-category-badge');
     const match = row.major_category ? row.major_category.match(/Table \d+/i) : null;
-    catBadge.textContent = match ? match[0] : 'CategorÃ­a';
+    catBadge.textContent = match ? match[0] : 'Categoría';
 
     const cleanGene = cleanGeneSymbol(row.gene);
     const cleanOmim = row.omim ? row.omim.replace(/[*+]/g, '').trim() : '';
@@ -2080,20 +2150,20 @@ function openDetailDrawer(row) {
     body.innerHTML = `
         <!-- General Category Details -->
         <div class="drawer-section">
-            <h4 class="drawer-section-title">ClasificaciÃ³n</h4>
+            <h4 class="drawer-section-title">Clasificación</h4>
             <div class="detail-item" style="margin-bottom:12px;">
-                <span class="detail-label">CategorÃ­a Mayor</span>
+                <span class="detail-label">Categoría Mayor</span>
                 <span class="detail-value">${row.major_category || 'N/A'}</span>
             </div>
             <div class="detail-item">
-                <span class="detail-label">SubcategorÃ­a</span>
+                <span class="detail-label">Subcategoría</span>
                 <span class="detail-value">${row.subcategory || 'N/A'}</span>
             </div>
         </div>
 
         <!-- Genetics and Inheritance -->
         <div class="drawer-section">
-            <h4 class="drawer-section-title">GenÃ©tica & CÃ³digos</h4>
+            <h4 class="drawer-section-title">Genética & Códigos</h4>
             <div class="detail-grid">
                 <div class="detail-item">
                     <span class="detail-label">Herencia</span>
@@ -2118,14 +2188,14 @@ function openDetailDrawer(row) {
 
         <!-- Immunological Profile -->
         <div class="drawer-section">
-            <h4 class="drawer-section-title">Perfil InmunolÃ³gico</h4>
+            <h4 class="drawer-section-title">Perfil Inmunológico</h4>
             <div class="detail-grid">
                 <div class="detail-item">
-                    <span class="detail-label">Recuento de CÃ©lulas T</span>
+                    <span class="detail-label">Recuento de Células T</span>
                     <span class="detail-value">${row.t_cell || 'Normal / No especificado'}</span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">Recuento de CÃ©lulas B</span>
+                    <span class="detail-label">Recuento de Células B</span>
                     <span class="detail-value">${row.b_cell || 'Normal / No especificado'}</span>
                 </div>
                 <div class="detail-item">
@@ -2133,13 +2203,13 @@ function openDetailDrawer(row) {
                     <span class="detail-value">${row.immunoglobulins || 'Normal / No especificado'}</span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">Recuento NeutrÃ³filos</span>
+                    <span class="detail-label">Recuento Neutrófilos</span>
                     <span class="detail-value">${row.neutrophils || 'Normal / No especificado'}</span>
                 </div>
             </div>
             ${row.other_cells ? `
                 <div class="detail-item" style="margin-top:10px;">
-                    <span class="detail-label">Otras CÃ©lulas Afectadas</span>
+                    <span class="detail-label">Otras Células Afectadas</span>
                     <span class="detail-value">${row.other_cells}</span>
                 </div>
             ` : ''}
@@ -2147,9 +2217,9 @@ function openDetailDrawer(row) {
 
         <!-- Clinical Manifestations -->
         <div class="drawer-section">
-            <h4 class="drawer-section-title">Manifestaciones ClÃ­nicas Asociadas</h4>
+            <h4 class="drawer-section-title">Manifestaciones Clínicas Asociadas</h4>
             <div class="associated-features-box">
-                ${row.associated_features || 'No se detallan manifestaciones clÃ­nicas especÃ­ficas.'}
+                ${row.associated_features || 'No se detallan manifestaciones clínicas específicas.'}
             </div>
         </div>
 
@@ -2278,7 +2348,7 @@ function copyGenesToClipboard() {
 
         const origText = textSpan.textContent;
 
-        textSpan.textContent = 'Â¡Copiado!';
+        textSpan.textContent = '¡Copiado!';
         iconWrapper.innerHTML = '<i data-lucide="check"></i>';
         lucide.createIcons();
         btn.style.color = 'var(--color-pubmed)';
@@ -2413,7 +2483,7 @@ function handleUploadedFile(file) {
         complete: function (results) {
             const rows = results.data;
             if (rows.length < 2) {
-                alert("Error: El archivo CSV estÃ¡ vacÃ­o o no contiene suficientes registros.");
+                alert("Error: El archivo CSV está vacío o no contiene suficientes registros.");
                 showLoading(false);
                 return;
             }
@@ -2469,7 +2539,7 @@ function handleUploadedFile(file) {
 
             // Load this new dataset into application
             loadDataset(newDatabase);
-            alert(`Base de datos cargada con Ã©xito! Se importaron ${newDatabase.length} registros.`);
+            alert(`Base de datos cargada con éxito! Se importaron ${newDatabase.length} registros.`);
         },
         error: function (err) {
             alert("Error al analizar el archivo CSV: " + err.message);
@@ -2503,16 +2573,16 @@ function getHeaderMapping(headers) {
     headers.forEach((h, idx) => {
         if (h.includes('disease') || h.includes('enfermedad')) map.disease = idx;
         else if (h.includes('defect') || h.includes('defecto') || h.includes('gene') || h.includes('gen')) map.gene = idx;
-        else if (h.includes('inheritance') || h.includes('herencia') || h.includes('patrÃ³n')) map.inheritance = idx;
+        else if (h.includes('inheritance') || h.includes('herencia') || h.includes('patrón')) map.inheritance = idx;
         else if (h.includes('gof') || h.includes('dn')) map.gof_dn = idx;
         else if (h.includes('omim')) map.omim = idx;
-        else if (h.includes('t cell') || h.includes('celulas t') || h.includes('cÃ©lulas t') || h.includes('t_cell')) map.t_cell = idx;
-        else if (h.includes('b cell') || h.includes('celulas b') || h.includes('cÃ©lulas b') || h.includes('b_cell')) map.b_cell = idx;
+        else if (h.includes('t cell') || h.includes('celulas t') || h.includes('células t') || h.includes('t_cell')) map.t_cell = idx;
+        else if (h.includes('b cell') || h.includes('celulas b') || h.includes('células b') || h.includes('b_cell')) map.b_cell = idx;
         else if (h.includes('immunoglobulin') || h.includes('inmunoglobulina') || h.includes('ig')) map.immunoglobulins = idx;
-        else if (h.includes('neutrophil') || h.includes('neutrofilo') || h.includes('neutrÃ³filo')) map.neutrophils = idx;
+        else if (h.includes('neutrophil') || h.includes('neutrofilo') || h.includes('neutrófilo')) map.neutrophils = idx;
         else if (h.includes('other') || h.includes('otras') || h.includes('otros')) map.other_cells = idx;
-        else if (h.includes('feature') || h.includes('asociado') || h.includes('associated') || h.includes('clinica') || h.includes('clÃ­nica') || h.includes('manifestacion')) map.associated_features = idx;
-        else if (h.includes('major') || h.includes('categoria mayor') || h.includes('categorÃ­a mayor') || h.includes('table') || h.includes('tabla')) map.major_category = idx;
+        else if (h.includes('feature') || h.includes('asociado') || h.includes('associated') || h.includes('clinica') || h.includes('clínica') || h.includes('manifestacion')) map.associated_features = idx;
+        else if (h.includes('major') || h.includes('categoria mayor') || h.includes('categoría mayor') || h.includes('table') || h.includes('tabla')) map.major_category = idx;
         else if (h.includes('subcat') || h.includes('sub-table') || h.includes('subtabla')) map.subcategory = idx;
         else if (h.includes('categorias_desglosed') || h.includes('categorias desglosed') || h.includes('category breakdown') || h.includes('desglosed')) map.categorias_desglosed = idx;
         else if (h.includes('icd9') || h.includes('icd-9') || h.includes('cie9')) map.icd9 = idx;
