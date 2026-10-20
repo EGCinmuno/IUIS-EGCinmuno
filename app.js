@@ -742,7 +742,7 @@ function initUiEvents() {
                 if (_tableUpdateTimer) clearTimeout(_tableUpdateTimer);
                 _tableUpdateTimer = setTimeout(() => {
                     commitFiltersToTable(matched);
-                }, 1800);
+                }, 100);
             });
 
             // Allow user to press Enter to filter table immediately
@@ -1638,14 +1638,14 @@ function initIgCalcModal() {
                     <div class="ig-chips-group-title">${cat}</div>
                     <div class="ig-chips-wrapper">
                         ${paramsInCat.map(p => {
-                            const isChecked = selectedParamIds.has(p.id);
-                            return `
+                const isChecked = selectedParamIds.has(p.id);
+                return `
                                 <div class="param-chip ${isChecked ? 'active' : ''}" data-param-id="${p.id}">
                                     <input type="checkbox" ${isChecked ? 'checked' : ''} onclick="event.stopPropagation();">
                                     <span>${p.name}</span>
                                 </div>
                             `;
-                        }).join('')}
+            }).join('')}
                     </div>
                 </div>
             `;
