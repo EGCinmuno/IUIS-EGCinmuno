@@ -881,13 +881,16 @@ body.light-theme .moon-icon { display: none; }
     background-color: var(--bg-surface);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    padding: 20px;
+    padding: 18px 20px;
     display: flex;
     align-items: center;
     gap: 16px;
     position: relative;
     overflow: hidden;
     box-shadow: var(--shadow-sm);
+    min-height: 106px;
+    height: 106px;
+    box-sizing: border-box;
     transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 .stat-card:hover {
@@ -908,11 +911,19 @@ body.light-theme .moon-icon { display: none; }
 .stat-icon-wrapper.green { background-color: var(--bg-card-green); color: var(--text-card-green); }
 .stat-icon-wrapper.orange { background-color: var(--bg-card-orange); color: var(--text-card-orange); }
 
+.stat-data {
+    flex: 1;
+    min-width: 0;
+}
+
 .stat-data h3 {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     font-weight: 700;
     line-height: 1.1;
     margin-bottom: 4px;
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .stat-data p {
     font-size: 0.75rem;
@@ -2355,18 +2366,22 @@ body.light-theme .moon-icon { display: none; }
 }
 
 .stat-impact-badge {
+    position: absolute;
+    top: 12px;
+    right: 14px;
     background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(245, 158, 11, 0.2));
     border: 1px solid rgba(245, 158, 11, 0.4);
     color: #f59e0b;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 700;
-    padding: 3px 9px;
+    padding: 2px 8px;
     border-radius: var(--radius-full);
     display: inline-flex;
     align-items: center;
     gap: 4px;
     box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
-    animation: impactPulse 1.5s infinite alternate ease-in-out;
+    z-index: 2;
+    white-space: nowrap;
 }
 
 @keyframes impactPulse {
@@ -3386,7 +3401,8 @@ html {
 
 /* Prevent the stats card counter animation from causing reflows */
 #stat-genes-count {
-    display: inline-block;
-    min-width: 4ch;
-    text-align: right;
+    display: block;
+    white-space: nowrap !important;
+    font-variant-numeric: tabular-nums;
+    font-size: 1.35rem;
 }

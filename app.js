@@ -1026,11 +1026,11 @@ function animateGeneCount(targetCount) {
     if (impactBadge) {
         if (targetCount < total && targetCount > 0) {
             const reductionPct = Math.round((1 - targetCount / total) * 100);
-            impactBadge.innerHTML = `<i data-lucide="sparkles" style="width:12px;height:12px;"></i> -${reductionPct}% (${targetCount} genes)`;
+            impactBadge.innerHTML = `<i data-lucide="sparkles" style="width:12px;height:12px;"></i> -${reductionPct}%`;
             impactBadge.style.display = 'inline-flex';
             if (window.lucide) lucide.createIcons();
         } else if (targetCount === 0) {
-            impactBadge.innerHTML = `<i data-lucide="alert-triangle" style="width:12px;height:12px;"></i> 0 genes`;
+            impactBadge.innerHTML = `<i data-lucide="alert-triangle" style="width:12px;height:12px;"></i> 0`;
             impactBadge.style.display = 'inline-flex';
             if (window.lucide) lucide.createIcons();
         } else {
@@ -1044,8 +1044,11 @@ function animateGeneCount(targetCount) {
         _geneAnimFrameId = null;
     }
 
+    // Format with non-breaking space (\u00A0) so browser never breaks across lines
+    const formatCount = (v) => `${v}\u00A0/\u00A0${total}`;
+
     if (startVal === targetCount) {
-        countElem.textContent = `${targetCount} / ${total}`;
+        countElem.textContent = formatCount(targetCount);
         return;
     }
 
@@ -1058,12 +1061,12 @@ function animateGeneCount(targetCount) {
         const easeOut = 1 - Math.pow(1 - progressRatio, 3);
         const currentVal = Math.round(startVal + (targetCount - startVal) * easeOut);
 
-        countElem.textContent = `${currentVal} / ${total}`;
+        countElem.textContent = formatCount(currentVal);
 
         if (progressRatio < 1) {
             _geneAnimFrameId = requestAnimationFrame(step);
         } else {
-            countElem.textContent = `${targetCount} / ${total}`;
+            countElem.textContent = formatCount(targetCount);
             _geneAnimFrameId = null;
         }
     }
